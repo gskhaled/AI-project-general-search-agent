@@ -1,7 +1,7 @@
 generic/Operator.java
  generic.Operator
-generic/SearchProblem.java
- generic.SearchProblem
+mission/Grid.java
+ mission.Grid
 generic/QueuingFunction.java
  generic.QueuingFunction
 mission/Node.java
@@ -10,8 +10,9 @@ generic/Node.java
  generic.Node
 mission/Operator.java
  mission.Operator
-mission/Grid.java
- mission.Grid
+generic/SearchProblem.java
+ generic.SearchProblem
+ generic.SearchProblem$1
 mission/MissionImpossible.java
  mission.MissionImpossible
  mission.MissionImpossible$1

@@ -11,58 +11,12 @@ public class MissionImpossible extends SearchProblem {
 
 	private Grid grid;
 	private Node initialState;
-	private int expandedNodes = 0;
-	FileWriter myWriter;
-	private HashMap<String, String> nodesPassed;
+	private Operator  [] operators;
 
-	public MissionImpossible(Grid grid, Node initialState, int expandedNodes) {
+	public MissionImpossible(Grid grid, Node initialState, Operator [] operators) {
 		this.grid = grid;
 		this.initialState = initialState;
-		this.expandedNodes = expandedNodes;
-		this.nodesPassed = new HashMap<String, String>();
-		try {
-			myWriter = new FileWriter("output.txt");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static String solve (String grid, String strategy, boolean visualize) {
-		Grid g = new Grid(grid);
-		short[] IMFstates = new short[g.getDamages().length];
-		Node initialState = new Node(g.getxEthan(), g.getyEthan(), g.getC(), (short) 0,
-				g.getxPoss(), g.getyPoss(), g.getDamages(), IMFstates, null,
-				null, 0, 0);
-
-		MissionImpossible MI = new MissionImpossible(g, initialState, 0);
-		QueuingFunction qingFun;
-
-		switch (strategy) {
-			case "DF":
-			case "ID":
-				qingFun = QueuingFunction.ENQUEUE_AT_FRONT;
-				break;
-			case "UC":
-				qingFun = QueuingFunction.ORDERED_INSERT;
-				break;
-			case "GR1":
-				qingFun = QueuingFunction.HEURISTIC_FN1;
-				break;
-			case "GR2":
-				qingFun = QueuingFunction.HEURISTIC_FN2;
-				break;
-			case "AS1":
-				qingFun = QueuingFunction.EVALUATION_FN1;
-				break;
-			case "AS2":
-				qingFun = QueuingFunction.EVALUATION_FN2;
-				break;
-			case "BF":
-			default:
-				qingFun = QueuingFunction.ENQUEUE_AT_END;
-		}
-		String solution = MI.search(qingFun);
-		return solution;
+		this.operators = operators;
 	}
 
 	@Override
@@ -214,157 +168,6 @@ public class MissionImpossible extends SearchProblem {
 		return false;
 	}
 
-	@Override
-	public String search(QueuingFunction queuingFunction) {
-		if(queuingFunction == QueuingFunction.ENQUEUE_AT_FRONT_IDS)
-			search(0);
-		String res = "";
-		LinkedList<Node> queue = new LinkedList<Node>();
-		queue.addLast(getInitialState());
-		while (!queue.isEmpty()) {
-			Node curr = queue.removeFirst();
-			String stringCurr = formulateNodeToString(curr);
-			if (nodesPassed.get(stringCurr) == null) {
-				nodesPassed.put(stringCurr, stringCurr);
-				expandedNodes++;
-				if (curr != null) {
-					if (goalTest((curr)))
-						return returnPath(curr);
-					String s = "";
-					if (curr.getOperator() != null) {
-						s += expandedNodes + " " + curr.getOperator().toString() + " ";
-						s += "X: " + curr.getParent().getX() + "->" + curr.getX() + " ";
-						s += "Y: " + curr.getParent().getY() + "->" + curr.getY() + " ";
-						s += "c: " + curr.getC();
-						s += " xPos: " + printArray(curr.getxPoss());
-						s += " yPos: " + printArray(curr.getyPoss());
-						s += " health: " + printArray(curr.getDamages());
-						s += " depth: " + curr.getDepth();
-						s += " my parent: " + (curr.getParent().getOperator() == null ? " " : curr.getParent().getOperator().toString());
-						s += " my toString: " + stringCurr;
-					}
-					try {
-						myWriter.write(s + '\n');
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-//                  System.out.println(s);
-//                  res += curr.getOperator()!=null ? curr.getOperator().toString() : "";
-					switch (queuingFunction) {
-						case ENQUEUE_AT_END: {
-							Node up = stateSpace(curr, Operator.UP);
-							Node down = stateSpace(curr, Operator.DOWN);
-							Node left = stateSpace(curr, Operator.LEFT);
-							Node right = stateSpace(curr, Operator.RIGHT);
-							Node carry = stateSpace(curr, Operator.CARRY);
-							Node drop = stateSpace(curr, Operator.DROP);
-							if (up != null)
-								queue.addLast(up);
-							if (down != null)
-								queue.addLast(down);
-							if (left != null)
-								queue.addLast(left);
-							if (right != null)
-								queue.addLast(right);
-							if (carry != null)
-								queue.addLast(carry);
-							if (drop != null)
-								queue.addLast(drop);
-						}
-						break;
-						case ENQUEUE_AT_FRONT: {
-							Node up = stateSpace(curr, Operator.UP);
-							Node down = stateSpace(curr, Operator.DOWN);
-							Node left = stateSpace(curr, Operator.LEFT);
-							Node right = stateSpace(curr, Operator.RIGHT);
-							Node carry = stateSpace(curr, Operator.CARRY);
-							Node drop = stateSpace(curr, Operator.DROP);
-							if (drop != null)
-								queue.addFirst(drop);
-							if (carry != null)
-								queue.addFirst(carry);
-							if (right != null)
-								queue.addFirst(right);
-							if (left != null)
-								queue.addFirst(left);
-							if (down != null)
-								queue.addFirst(down);
-							if (up != null)
-								queue.addFirst(up);
-						}
-						break;
-						default:
-							return "";
-					}
-				}
-			}
-		}
-		return res;
-	}
-
-	public String search(int depth) {
-		String res = "";
-		LinkedList<Node> queue = new LinkedList<Node>();
-		queue.addLast(getInitialState());
-		while (!queue.isEmpty()) {
-			Node curr = queue.removeFirst();
-			if (curr.getDepth() < depth) {
-				String stringCurr = formulateNodeToString(curr);
-				if (nodesPassed.get(stringCurr) == null) {
-					nodesPassed.put(stringCurr, stringCurr);
-					expandedNodes++;
-					if (curr != null) {
-						String s = "";
-						if (curr.getOperator() != null) {
-							s += expandedNodes + " " + curr.getOperator().toString() + " ";
-							s += "X: " + curr.getParent().getX() + "->" + curr.getX() + " ";
-							s += "Y: " + curr.getParent().getY() + "->" + curr.getY() + " ";
-							s += "c: " + curr.getC();
-							s += " xPos: " + printArray(curr.getxPoss());
-							s += " yPos: " + printArray(curr.getyPoss());
-							s += " health: " + printArray(curr.getDamages());
-							s += " depth: " + curr.getDepth();
-							s += " my parent: " + (curr.getParent().getOperator() == null ? " " : curr.getParent().getOperator().toString());
-							s += " my toString: " + stringCurr;
-						}
-						try {
-							myWriter.write(s + '\n');
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						Node up = stateSpace(curr, Operator.UP);
-						Node down = stateSpace(curr, Operator.DOWN);
-						Node left = stateSpace(curr, Operator.LEFT);
-						Node right = stateSpace(curr, Operator.RIGHT);
-						Node carry = stateSpace(curr, Operator.CARRY);
-						Node drop = stateSpace(curr, Operator.DROP);
-						if (drop != null)
-							queue.addFirst(drop);
-						if (carry != null)
-							queue.addFirst(carry);
-						if (right != null)
-							queue.addFirst(right);
-						if (left != null)
-							queue.addFirst(left);
-						if (down != null)
-							queue.addFirst(down);
-						if (up != null)
-							queue.addFirst(up);
-					}
-				}
-			}
-		}
-		return search(depth + 1);
-	}
-
-	public String printArray(short[] arr) {
-		String s = "[";
-		for (int i = 0; i < arr.length; i++)
-			s += arr[i] + ", ";
-		s += "]";
-		return s;
-	}
-
 	public short[] copyArray(short[] arr) {
 		short[] res = new short[arr.length];
 		for (int i = 0; i < arr.length; i++)
@@ -372,16 +175,6 @@ public class MissionImpossible extends SearchProblem {
 		return res;
 	}
 
-	public String returnPath(Node n) {
-		if (n.getParent() == null || n.getParent().getOperator() == null)
-			return n.getOperator() + "";
-		else
-			return returnPath(n.getParent()) + "->" + n.getOperator().toString();
-	}
-
-	public String formulateNodeToString(Node state) {
-		return state.getX() + "," + state.getY() + ";" + Arrays.toString(state.getIMFstates()) + ";" + state.getC();
-	}
 
 	public Grid getGrid() {
 		return grid;
@@ -391,9 +184,10 @@ public class MissionImpossible extends SearchProblem {
 		return initialState;
 	}
 
-	public int getExpandedNodes() {
-		return expandedNodes;
+	public Operator[] getOperators() {
+		return operators;
 	}
+
 
 	public static int generateNumber(int min, int max) {
 		return (int) (Math.random() * (max - min + 1) + min);
@@ -523,14 +317,52 @@ public class MissionImpossible extends SearchProblem {
 		return res;
 	}
 
+	public static String solve (String grid, String strategy, boolean visualize) {
+		Grid g = new Grid(grid);
+		short[] IMFstates = new short[g.getDamages().length];
+		Node initialState = new Node(g.getxEthan(), g.getyEthan(), g.getC(), (short) 0,
+				g.getxPoss(), g.getyPoss(), g.getDamages(), IMFstates, null,
+				null, 0, 0);
+
+		SearchProblem MI = new MissionImpossible(g, initialState, Operator.values());
+		QueuingFunction qingFun;
+
+		switch (strategy) {
+			case "DF":
+			case "ID":
+				qingFun = QueuingFunction.ENQUEUE_AT_FRONT;
+				break;
+			case "UC":
+				qingFun = QueuingFunction.ORDERED_INSERT;
+				break;
+			case "GR1":
+				qingFun = QueuingFunction.HEURISTIC_FN1;
+				break;
+			case "GR2":
+				qingFun = QueuingFunction.HEURISTIC_FN2;
+				break;
+			case "AS1":
+				qingFun = QueuingFunction.EVALUATION_FN1;
+				break;
+			case "AS2":
+				qingFun = QueuingFunction.EVALUATION_FN2;
+				break;
+			case "BF":
+			default:
+				qingFun = QueuingFunction.ENQUEUE_AT_END;
+		}
+		String solution = search(MI, qingFun);
+		return solution;
+	}
+
 	public static void main(String[] args) {
 		//String grid = genGrid();
 		//System.out.println(grid);
 
-		Grid grid1 = new Grid("3,3;0,0;1,0;1,1,2,2;85,22;1");
+		Grid grid1 = new Grid("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2");
 		//Grid grid1 = new Grid(grid);
 		System.out.println(grid1.toString());
 
-		System.out.println(solve("3,3;0,0;1,0;1,1,2,2;85,22;1", "DF", false));
+		System.out.println(solve("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2", "BF", false));
 	}
 }
