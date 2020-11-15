@@ -25,16 +25,16 @@ public abstract class SearchProblem {
 
     public static String returnPath(Node n) {
         if (n.getParent() == null || n.getParent().getOperator() == null)
-            return n.getOperator() + "";
+            return n.getOperator().toString().toLowerCase() + "";
         else
-            return returnPath(n.getParent()) + "," + n.getOperator().toString();
+            return returnPath(n.getParent()) + "," + n.getOperator().toString().toLowerCase();
     }
 
     public static String formulateNodeToString(Node state) {
         return state.getX() + "," + state.getY() + ";" + Arrays.toString(state.getIMFstates()) + ";" + state.getC();
     }
 
-    public static String ConvertArrayToString(short [] arr) {
+    public static String convertArrayToString(short [] arr) {
         String res = "";
         for (int i = 0; i < arr.length; i++){
             if(i < arr.length - 1)
@@ -65,7 +65,7 @@ public abstract class SearchProblem {
                 expandedNodes++;
                 if (curr != null) {
                     if (problem.goalTest((curr)))
-                        return returnPath(curr);
+                        return returnPath(curr) + ";" + curr.getDeaths() + ";" + convertArrayToString(curr.getDamages()) + ";" + expandedNodes;
                     String s = "";
                     if (curr.getOperator() != null) {
                         s += expandedNodes + " " + curr.getOperator().toString() + " ";
@@ -79,12 +79,12 @@ public abstract class SearchProblem {
                         s += " my parent: " + (curr.getParent().getOperator() == null ? " " : curr.getParent().getOperator().toString());
                         s += " my toString: " + stringCurr;
                     }
-                    try {
-                        FileWriter myWriter = new FileWriter("output.txt");
-                        myWriter.write(s + '\n');
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        FileWriter myWriter = new FileWriter("output.txt");
+//                        myWriter.write(s + '\n');
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
 //                  System.out.println(s);
 //                  res += curr.getOperator()!=null ? curr.getOperator().toString() : "";
                     switch (queuingFunction) {

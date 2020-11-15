@@ -362,7 +362,7 @@ public class MissionImpossible extends SearchProblem {
 		Grid grid1 = new Grid("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2");
 		//Grid grid1 = new Grid(grid);
 		System.out.println(grid1.toString());
-
+		//"5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2"
 		System.out.println(solve("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2", "BF", false));
 	}
 }

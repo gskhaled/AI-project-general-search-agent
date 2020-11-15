@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.PrintWriter;
 import org.junit.jupiter.api.Test;
 
-import code.mission.MissionImpossible;
+import mission.MissionImpossible;
 
 
 
