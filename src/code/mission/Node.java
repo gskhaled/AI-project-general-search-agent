@@ -1,5 +1,7 @@
 package mission;
 
+import java.util.Arrays;
+
 public class Node extends generic.Node {
     private short x;
     private short y;
@@ -27,6 +29,10 @@ public class Node extends generic.Node {
         this.operator = operator;
         this.depth = depth;
         this.pathCost = pathCost;
+    }
+
+    public String formulateNodeToString() {
+        return this.getX() + "," + this.getY() + ";" + Arrays.toString(this.getIMFstates()) + ";" + this.getC();
     }
 
     public Node getParent() {
@@ -60,6 +66,8 @@ public class Node extends generic.Node {
     public void setPathCost(int pathCost) {
         this.pathCost = pathCost;
     }
+
+
 
     public short getX() {
         return x;

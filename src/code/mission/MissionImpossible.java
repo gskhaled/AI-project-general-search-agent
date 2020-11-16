@@ -20,7 +20,8 @@ public class MissionImpossible extends SearchProblem {
     }
 
     @Override
-    public Node stateSpace(Node node, Operator operator) {
+    public generic.Node stateSpace(generic.Node genericNode, Operator operator) {
+        Node node = (mission.Node) genericNode;
         short[] damages = copyArray(node.getDamages());
         short[] xPoss = copyArray(node.getxPoss());
         short[] yPoss = copyArray(node.getyPoss());
@@ -142,12 +143,11 @@ public class MissionImpossible extends SearchProblem {
                     }
                 for (int i = 0; i < damages.length; i++)
                     if (IMFstates[i] == 0) {
-						if(damages[i] == 99 || damages[i] == 98) {
-							damages[i] = 100;
-							deaths += 1;
-						}
-						else if(damages[i] + 2 < 100)
-							damages[i] += 2;
+                        if (damages[i] == 99 || damages[i] == 98) {
+                            damages[i] = 100;
+                            deaths += 1;
+                        } else if (damages[i] + 2 < 100)
+                            damages[i] += 2;
                     }
                 return new Node(node.getX(), node.getY(), c, deaths, xPoss, yPoss, damages, IMFstates, node,
                         Operator.DROP, node.getDepth() + 1, 0);
@@ -157,18 +157,6 @@ public class MissionImpossible extends SearchProblem {
         }
     }
 
-    @Override
-    public Boolean goalTest(Node node) {
-        boolean allAreInSub = true;
-//        System.out.println(node.getIMFstates().length);
-        for (int i = 0; i < node.getIMFstates().length; i++)
-            if (node.getIMFstates()[i] != 2)
-                allAreInSub = false;
-        if (node.getX() == grid.getxSub() && node.getY() == grid.getySub() && allAreInSub)
-            return true;
-        return false;
-    }
-
     public short[] copyArray(short[] arr) {
         short[] res = new short[arr.length];
         for (int i = 0; i < arr.length; i++)
@@ -176,9 +164,20 @@ public class MissionImpossible extends SearchProblem {
         return res;
     }
 
-
     public Grid getGrid() {
         return grid;
+    }
+
+    @Override
+    public Boolean goalTest(generic.Node genericNode) {
+        Node node = (mission.Node) genericNode;
+        boolean allAreInSub = true;
+        for (int i = 0; i < node.getIMFstates().length; i++)
+            if (node.getIMFstates()[i] != 2)
+                allAreInSub = false;
+        if (node.getX() == grid.getxSub() && node.getY() == grid.getySub() && allAreInSub)
+            return true;
+        return false;
     }
 
     public Node getInitialState() {
@@ -189,74 +188,34 @@ public class MissionImpossible extends SearchProblem {
         return operators;
     }
 
+    @Override
+    public String returnPath(generic.Node n) {
+        Node curr = (Node) n;
+        String res = "";
+        Stack<String> stack = new Stack<String>();
+        stack.push(";" + curr.getDeaths() + ";" + convertArrayToString(curr.getDamages()) + ";" + SearchProblem.expandedNodes);
+        while(curr.getParent() != null && curr.getParent().getOperator() != null) {
+            stack.push(curr.getOperator().toString().toLowerCase() + ",");
+            curr = curr.getParent();
+        }
+        while(!stack.isEmpty())
+            res += stack.pop();
+        return res;
+    }
+
+    public static String convertArrayToString(short[] arr) {
+        String res = "";
+        for (int i = 0; i < arr.length; i++) {
+            if (i < arr.length - 1)
+                res += arr[i] + ",";
+            else
+                res += arr[i];
+        }
+        return res;
+    }
 
     public static int generateNumber(int min, int max) {
         return (int) (Math.random() * (max - min + 1) + min);
-    }
-
-    //    public static void print(String [][] arr) {
-//        for (int i =0; i < arr.length; i++) {
-//            for (int j = 0; j < arr[i].length; j++) {
-//                System.out.print(" | " + arr[i][j]);
-//            }
-//            System.out.println(" ");
-//        }
-//    }
-    public Stack<Node> getPath(Node node) {
-        Stack<Node> stack = new Stack<>();
-        stack.push(node);
-        Node currNode = node.getParent();
-        while (currNode != null) {
-            stack.push(currNode);
-            currNode = currNode.getParent();
-        }
-        return stack;
-    }
-
-    //    public void printNode(Node node){
-//        String res = "";
-//        boolean space=false;
-//        for (int i =0; i < grid.getRows(); i++) {
-//            res+="  |  ";
-//            for (int j = 0; j < grid.getColumns(); j++) {
-//                if (i == node.getX() && j == node.getY()) {
-//                    res += "  E  ";
-//                    res+="  |  ";
-//                    space = true;
-//                }
-//                if (i == grid.getxSub() && j == grid.getySub()) {
-//                    res += "  S  ";
-//                    res+="  |  ";
-//                    space = true;
-//                }
-//                for (int k = 0; k < node.xPoss.length; k++) {
-//                    if (i == node.xPoss[k] && j == node.yPoss[k]) {
-//                        res += "F(" + node.damages[k] + ")";
-//                        res+="|";
-//                        space= true;
-//                    }
-//                }
-//
-//              if(!space) res+="   |   ";
-//              space = false;
-//
-//            }
-//            res += " \n";
-//
-//        }
-//        res += "Current carry: " +node.c + " ; Current deaths: " + node.deaths + " ; Expanded nodes: " + getExpandedNodes();
-//        res += " \n ";
-//        System.out.println(res);
-//    }
-    public void visualize(Node goalState) {
-        Stack<Node> stack = getPath(goalState);
-        Scanner sc = new Scanner(System.in);
-        while (!stack.isEmpty()) {
-            Node currNode = stack.pop();
-            //printNode(currNode);
-            System.out.println("Press ENTER");
-            sc.nextLine();
-        }
     }
 
     public static String genGrid() {
@@ -361,11 +320,10 @@ public class MissionImpossible extends SearchProblem {
     public static void main(String[] args) {
         //String grid = genGrid();
         //System.out.println(grid);
-
         Grid grid1 = new Grid("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2");
         //Grid grid1 = new Grid(grid);
         System.out.println(grid1.toString());
         //"5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2"
-        System.out.println(solve("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2", "ID", false));
+        System.out.println(solve("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2", "BF", false));
     }
 }
