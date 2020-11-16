@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="tests.TestMissionImpossible" tests="20" skipped="1" failures="12" errors="0" timestamp="2020-11-15T22:15:23" hostname="LAPTOP-3TQ565OO" time="225.712">
+<testsuite name="tests.TestMissionImpossible" tests="20" skipped="1" failures="12" errors="0" timestamp="2020-11-16T22:15:34" hostname="LAPTOP-3TQ565OO" time="108.488">
   <properties/>
-  <testcase name="testa10()" classname="tests.TestMissionImpossible" time="10.824"/>
-  <testcase name="testa11()" classname="tests.TestMissionImpossible" time="5.487"/>
-  <testcase name="testb10()" classname="tests.TestMissionImpossible" time="0.004">
+  <testcase name="testa10()" classname="tests.TestMissionImpossible" time="6.66"/>
+  <testcase name="testa11()" classname="tests.TestMissionImpossible" time="3.386"/>
+  <testcase name="testb10()" classname="tests.TestMissionImpossible" time="0.006">
     <failure message="org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;
 	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
 	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:40)
@@ -197,7 +197,7 @@
 	at java.lang.Thread.run(Thread.java:748)
 </failure>
   </testcase>
-  <testcase name="testc10()" classname="tests.TestMissionImpossible" time="0.0">
+  <testcase name="testc10()" classname="tests.TestMissionImpossible" time="0.002">
     <failure message="org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;
 	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
 	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:40)
@@ -294,7 +294,7 @@
 	at java.lang.Thread.run(Thread.java:748)
 </failure>
   </testcase>
-  <testcase name="testc11()" classname="tests.TestMissionImpossible" time="0.0">
+  <testcase name="testc11()" classname="tests.TestMissionImpossible" time="0.001">
     <failure message="org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;
 	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
 	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:40)
@@ -682,7 +682,7 @@
 	at java.lang.Thread.run(Thread.java:748)
 </failure>
   </testcase>
-  <testcase name="testf11()" classname="tests.TestMissionImpossible" time="0.002">
+  <testcase name="testf11()" classname="tests.TestMissionImpossible" time="0.0">
     <failure message="org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;
 	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
 	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:40)
@@ -973,7 +973,7 @@
 	at java.lang.Thread.run(Thread.java:748)
 </failure>
   </testcase>
-  <testcase name="testh10()" classname="tests.TestMissionImpossible" time="0.0">
+  <testcase name="testh10()" classname="tests.TestMissionImpossible" time="0.001">
     <failure message="org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: &lt;true&gt; but was: &lt;false&gt;
 	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
 	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:40)
@@ -1167,12 +1167,12 @@
 	at java.lang.Thread.run(Thread.java:748)
 </failure>
   </testcase>
-  <testcase name="testa1()" classname="tests.TestMissionImpossible" time="0.017"/>
-  <testcase name="testa2()" classname="tests.TestMissionImpossible" time="0.052"/>
-  <testcase name="testa3()" classname="tests.TestMissionImpossible" time="0.207"/>
-  <testcase name="testa4()" classname="tests.TestMissionImpossible" time="0.053"/>
-  <testcase name="testa5()" classname="tests.TestMissionImpossible" time="55.777"/>
-  <testcase name="testa6()" classname="tests.TestMissionImpossible" time="153.27">
+  <testcase name="testa1()" classname="tests.TestMissionImpossible" time="0.013"/>
+  <testcase name="testa2()" classname="tests.TestMissionImpossible" time="0.029"/>
+  <testcase name="testa3()" classname="tests.TestMissionImpossible" time="0.122"/>
+  <testcase name="testa4()" classname="tests.TestMissionImpossible" time="0.008"/>
+  <testcase name="testa5()" classname="tests.TestMissionImpossible" time="35.344"/>
+  <testcase name="testa6()" classname="tests.TestMissionImpossible" time="62.897">
     <skipped/>
   </testcase>
   <system-out><![CDATA[]]></system-out>

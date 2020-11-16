@@ -4,12 +4,12 @@ mission/Grid.java
  mission.Grid
 generic/QueuingFunction.java
  generic.QueuingFunction
-mission/Node.java
- mission.Node
-generic/Node.java
- generic.Node
 mission/Operator.java
  mission.Operator
+generic/Node.java
+ generic.Node
+mission/Node.java
+ mission.Node
 generic/SearchProblem.java
  generic.SearchProblem
  generic.SearchProblem$1
