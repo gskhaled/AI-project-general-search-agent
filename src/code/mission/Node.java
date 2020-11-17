@@ -3,14 +3,6 @@ package mission;
 import java.util.Arrays;
 
 public class Node extends generic.Node {
-    private short x;
-    private short y;
-    private short[] xPoss;
-    private short[] yPoss;
-    private short[] damages;
-    private short[] IMFstates;
-    private short c;
-    private short deaths;
     private Node parent;
     private Operator operator;
     private int depth;
@@ -88,65 +80,19 @@ public class Node extends generic.Node {
         return pathCost;
     }
 
-    public short getX() {
-        return x;
-    }
 
-    public void setX(short x) {
-        this.x = x;
-    }
 
-    public short getY() {
-        return y;
-    }
 
-    public void setY(short y) {
-        this.y = y;
-    }
 
-    public short getC() {
-        return c;
-    }
 
-    public void setC(short c) {
-        this.c = c;
-    }
 
-    public short[] getIMFstates() {
-        return IMFstates;
-    }
 
-    public void setIMFstates(short[] IMFstates) {
-        this.IMFstates = IMFstates;
-    }
 
-    public short[] getxPoss() {
-        return xPoss;
-    }
 
-    public short[] getyPoss() {
-        return yPoss;
-    }
 
-    public short[] getDamages() {
-        return damages;
-    }
 
-    public short getDeaths() {
-        return deaths;
-    }
 
-    public void setxPoss(short xPos, int i) {
-        this.xPoss[i] = xPos;
-    }
 
-    public void setyPoss(short yPos, int i) {
-        this.yPoss[i] = yPos;
-    }
-
-    public void setDamages(short damage, int i) {
-        this.damages[i] = damage;
-    }
 
     public String getState() {
         return this.state;
