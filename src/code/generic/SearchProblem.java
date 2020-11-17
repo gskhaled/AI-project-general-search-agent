@@ -2,6 +2,8 @@ package generic;
 
 import mission.Operator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -123,12 +125,12 @@ public abstract class SearchProblem {
     }*/
     public static String search(SearchProblem problem, QueuingFunction queuingFunction) {
         String res = "";
-        LinkedList<Node> queue = new LinkedList<Node>();
-        queue.addLast(problem.getInitialState());
+        ArrayList<Node> queue = new ArrayList<>();
+        queue.add(queue.size(),problem.getInitialState());
         switch (queuingFunction) {
             case ENQUEUE_AT_END: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.removeFirst();
+                    Node curr = queue.remove(0);
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -138,7 +140,7 @@ public abstract class SearchProblem {
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                             if (node != null)
-                                queue.addLast(node);
+                                queue.add(queue.size(),node);
                         }
                     }
                 }
@@ -146,7 +148,7 @@ public abstract class SearchProblem {
             break;
             case ENQUEUE_AT_FRONT: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.removeFirst();
+                    Node curr = queue.remove(0);
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -156,7 +158,7 @@ public abstract class SearchProblem {
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                             if (node != null)
-                                queue.addFirst(node);
+                                queue.add(0,node);
                         }
                     }
                 }
@@ -166,7 +168,7 @@ public abstract class SearchProblem {
                 int currentDepth = 0;
                 while (true) {
                     while (!queue.isEmpty()) {
-                        Node curr = queue.removeFirst();
+                        Node curr = queue.remove(0);
                         if (!(curr.getDepth() > currentDepth)) {
                             String currString = curr.formulateNodeToString();
                             if (nodesPassed.get(currString) == null) {
@@ -177,19 +179,19 @@ public abstract class SearchProblem {
                                 for (int i = 0; i < problem.getOperators().length; i++) {
                                     Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                                     if (node != null)
-                                        queue.addLast(node);
+                                        queue.add(0,node);
                                 }
                             }
                         }
                     }
                     currentDepth = currentDepth + 1;
-                    queue.addLast(problem.getInitialState());
+                    queue.add(0,problem.getInitialState());
                     nodesPassed.clear();
                 }
             }
             case ORDERED_INSERT: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.removeFirst();
+                    Node curr = queue.remove(0);
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -199,8 +201,9 @@ public abstract class SearchProblem {
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                             if (node != null)
-                                queue = priorityInsert(queue, node);
+                                queue.add(node);
                         }
+                        Collections.sort(queue);
                     }
                 }
             }
@@ -212,9 +215,9 @@ public abstract class SearchProblem {
     }
 
 
-    public static LinkedList<generic.Node> priorityInsert(LinkedList<generic.Node> queue, generic.Node node) {
+    public static ArrayList<generic.Node> priorityInsert(ArrayList<generic.Node> queue, generic.Node node) {
         boolean isInserted = false;
-        if (!queue.isEmpty() && queue.getLast().getPathCost() > node.getPathCost())
+        if (!queue.isEmpty() && queue.get(queue.size()).getPathCost() > node.getPathCost())
             for (int i = 0; i < queue.size(); i++)
                 if (queue.get(i).getPathCost() > node.getPathCost()) {
                     queue.add(i, node);
@@ -222,7 +225,7 @@ public abstract class SearchProblem {
                     break;
                 }
         if (!isInserted)
-            queue.addLast(node);
+            queue.add(queue.size(),node);
         return queue;
     }
 

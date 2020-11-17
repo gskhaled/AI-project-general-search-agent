@@ -3,10 +3,11 @@ package mission;
 import generic.QueuingFunction;
 import generic.SearchProblem;
 
+import javax.sound.midi.Soundbank;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.*;
-
 public class MissionImpossible extends SearchProblem {
 
     private Grid grid;
@@ -22,16 +23,22 @@ public class MissionImpossible extends SearchProblem {
     @Override
     public generic.Node stateSpace(generic.Node genericNode, Operator operator) {
         Node node = (mission.Node) genericNode;
-        short[] damages = copyArray(node.getDamages());
-        short[] xPoss = copyArray(node.getxPoss());
-        short[] yPoss = copyArray(node.getyPoss());
-        short[] IMFstates = copyArray(node.getIMFstates());
-        short deaths = node.getDeaths();
-        short c = node.getC();
+        String state=node.getState();
+        String[] currentStates=state.split(";");
+        String[] ethanPosCarryDeaths = currentStates[0].split(",");
+        short x=Short.valueOf(ethanPosCarryDeaths[0]);
+        short y=Short.valueOf(ethanPosCarryDeaths[1]);
+        short c=Short.valueOf(ethanPosCarryDeaths[2]);
+        short deaths =Short.valueOf(ethanPosCarryDeaths[3]);
+
+        short[] xPoss = copyArray(currentStates[1].split(","));
+        short[] yPoss = copyArray(currentStates[2].split(","));
+        short[] damages = copyArray(currentStates[3].split(","));
+        short[] IMFstates = copyArray(currentStates[4].split(","));
 
         switch (operator) {
             case UP: {
-                if (node.getX() == 0)
+                if (x == 0)
                     return null;
                 if (node.getOperator() != null && node.getOperator() == Operator.DOWN)
                     return null;
@@ -41,20 +48,20 @@ public class MissionImpossible extends SearchProblem {
                         if (damages[i] == 99 || damages[i] == 98) {
                             damages[i] = 100;
                             deaths += 1;
-                            pathCost += 100;
+                            pathCost += IMFstates.length*100;
                         } else if (damages[i] + 2 < 100) {
                             damages[i] += 2;
                             pathCost += 2;
                         }
                     } else if (IMFstates[i] == 1) // an IMF i am carrying
-                        xPoss[i] = (short) (node.getX() - 1);
+                        xPoss[i] = (short) (x - 1);
                 }
-                Node result = new Node((short) (node.getX() - 1), node.getY(), node.getC(), deaths, xPoss,
+                Node result = new Node((short) (x - 1), y, c, deaths, xPoss,
                         yPoss, damages, IMFstates, node, Operator.UP, node.getDepth() + 1, pathCost);
                 return result;
             }
             case DOWN: {
-                if ((node.getX() == grid.getRows() - 1))
+                if ((x == grid.getRows() - 1))
                     return null;
                 if (node.getOperator() != null && node.getOperator() == Operator.UP)
                     return null;
@@ -64,43 +71,20 @@ public class MissionImpossible extends SearchProblem {
                         if (damages[i] == 99 || damages[i] == 98) {
                             damages[i] = 100;
                             deaths += 1;
-                            pathCost += 100;
+                            pathCost += IMFstates.length*100;
                         } else if (damages[i] + 2 < 100) {
                             damages[i] += 2;
                             pathCost += 2;
                         }
                     } else if (IMFstates[i] == 1) // an IMF i am carrying
-                        xPoss[i] = (short) (node.getX() + 1);
+                        xPoss[i] = (short) (x + 1);
                 }
-                Node result = new Node((short) (node.getX() + 1), node.getY(), node.getC(), deaths, xPoss,
+                Node result = new Node((short) (x + 1), y, c, deaths, xPoss,
                         yPoss, damages, IMFstates, node, Operator.DOWN, node.getDepth() + 1, pathCost);
                 return result;
             }
-            case LEFT: {
-                if (node.getY() == 0 || (node.getOperator() != null && node.getOperator() == Operator.RIGHT))
-                    return null;
-                else {
-                    int pathCost = node.getPathCost();
-                    for (int i = 0; i < damages.length; i++) {
-                        if (IMFstates[i] == 0) { // an IMF i am not carrying
-                            if (damages[i] == 99 || damages[i] == 98) {
-                                damages[i] = 100;
-                                deaths += 1;
-                                pathCost += 100;
-                            } else if (damages[i] + 2 < 100) {
-                                damages[i] += 2;
-                                pathCost += 2;
-                            }
-                        } else if (IMFstates[i] == 1) // an IMF i am carrying
-                            yPoss[i] = (short) (node.getY() - 1);
-                    }
-                    Node result = new Node(node.getX(), (short) (node.getY() - 1), node.getC(), deaths, xPoss,
-                            yPoss, damages, IMFstates, node, Operator.LEFT, node.getDepth() + 1, pathCost);
-                    return result;
-                }
-            }
             case RIGHT: {
-                if (node.getY() == grid.getColumns() || (node.getOperator() != null && node.getOperator() == Operator.LEFT))
+                if (y == grid.getColumns()-1 || (node.getOperator() != null && node.getOperator() == Operator.LEFT))
                     return null;
                 else {
                     int pathCost = node.getPathCost();
@@ -109,25 +93,49 @@ public class MissionImpossible extends SearchProblem {
                             if (damages[i] == 99 || damages[i] == 98) {
                                 damages[i] = 100;
                                 deaths += 1;
-                                pathCost += 100;
+                                pathCost += IMFstates.length*100;
                             } else if (damages[i] + 2 < 100) {
                                 damages[i] += 2;
                                 pathCost += 2;
                             }
                         } else if (IMFstates[i] == 1) // an IMF i am carrying
-                            yPoss[i] = (short) (node.getY() + 1);
+                            yPoss[i] = (short) (y + 1);
                     }
-                    Node result = new Node(node.getX(), (short) (node.getY() + 1), node.getC(), deaths, xPoss,
+                    Node result = new Node(x, (short) (y + 1), c, deaths, xPoss,
                             yPoss, damages, IMFstates, node, Operator.RIGHT, node.getDepth() + 1, pathCost);
                     return result;
                 }
             }
+            case LEFT: {
+                if (y == 0 || (node.getOperator() != null && node.getOperator() == Operator.RIGHT))
+                    return null;
+                else {
+                    int pathCost = node.getPathCost();
+                    for (int i = 0; i < damages.length; i++) {
+                        if (IMFstates[i] == 0) { // an IMF i am not carrying
+                            if (damages[i] == 99 || damages[i] == 98) {
+                                damages[i] = 100;
+                                deaths += 1;
+                                pathCost += IMFstates.length*100;
+                            } else if (damages[i] + 2 < 100) {
+                                damages[i] += 2;
+                                pathCost += 2;
+                            }
+                        } else if (IMFstates[i] == 1) // an IMF i am carrying
+                            yPoss[i] = (short) (y - 1);
+                    }
+                    Node result = new Node(x, (short) (y - 1), c, deaths, xPoss,
+                            yPoss, damages, IMFstates, node, Operator.LEFT, node.getDepth() + 1, pathCost);
+                    return result;
+                }
+            }
+
             case CARRY: {
                 boolean imfCarried = false;
                 if (node.getOperator() != null && node.getOperator() == Operator.DROP)
                     return null;
                 for (int i = 0; i < xPoss.length; i++) {
-                    if (xPoss[i] == node.getX() && yPoss[i] == node.getY() && IMFstates[i] == 0 && c > 0) {
+                    if (xPoss[i] == x && yPoss[i] == y && IMFstates[i] == 0 && c > 0) {
                         c -= 1;
                         IMFstates[i] = 1;
                         imfCarried = true;
@@ -139,14 +147,14 @@ public class MissionImpossible extends SearchProblem {
                         if (damages[i] == 99 || damages[i] == 98) {
                             damages[i] = 100;
                             deaths += 1;
-                            pathCost += 100;
+                            pathCost += IMFstates.length*100;
                         } else if (damages[i] + 2 < 100) {
                             damages[i] += 2;
                             pathCost += 2;
                         }
                     }
                 if (imfCarried)
-                    return new Node(node.getX(), node.getY(), c, deaths, xPoss,
+                    return new Node(x, y, c, deaths, xPoss,
                             yPoss, damages, IMFstates, node, Operator.CARRY, node.getDepth() + 1, pathCost);
                 else
                     return null;
@@ -154,7 +162,7 @@ public class MissionImpossible extends SearchProblem {
             case DROP: {
                 if (node.getOperator() != null && node.getOperator() == Operator.CARRY)
                     return null;
-                if (node.getC() == grid.getC() || !(node.getX() == grid.getxSub() && node.getY() == grid.getySub()))
+                if (c == grid.getC() || !(x == grid.getxSub() && y == grid.getySub()))
                     return null;
                 for (int i = 0; i < xPoss.length; i++)
                     if (xPoss[i] == grid.getxSub() && yPoss[i] == grid.getySub() && IMFstates[i] == 1) {
@@ -167,13 +175,13 @@ public class MissionImpossible extends SearchProblem {
                         if (damages[i] == 99 || damages[i] == 98) {
                             damages[i] = 100;
                             deaths += 1;
-                            pathCost += 100;
+                            pathCost += IMFstates.length*100;
                         } else if (damages[i] + 2 < 100) {
                             damages[i] += 2;
                             pathCost += 2;
                         }
                     }
-                return new Node(node.getX(), node.getY(), c, deaths, xPoss, yPoss, damages, IMFstates, node,
+                return new Node(x, y, c, deaths, xPoss, yPoss, damages, IMFstates, node,
                         Operator.DROP, node.getDepth() + 1, pathCost);
             }
             default:
@@ -181,10 +189,10 @@ public class MissionImpossible extends SearchProblem {
         }
     }
 
-    public short[] copyArray(short[] arr) {
+    public short[] copyArray(String[] arr) {
         short[] res = new short[arr.length];
         for (int i = 0; i < arr.length; i++)
-            res[i] = arr[i];
+            res[i] = Short.valueOf(arr[i]);
         return res;
     }
 
@@ -195,11 +203,19 @@ public class MissionImpossible extends SearchProblem {
     @Override
     public Boolean goalTest(generic.Node genericNode) {
         Node node = (mission.Node) genericNode;
+        String state=node.getState();
+        String[] currentStates=state.split(";");
+        String[] ethanPosCarryDamages = currentStates[0].split(",");
+        short x=Short.valueOf(ethanPosCarryDamages[0]);
+        short y=Short.valueOf(ethanPosCarryDamages[1]);
+        short[] IMFstates = copyArray(currentStates[4].split(","));
         boolean allAreInSub = true;
-        for (int i = 0; i < node.getIMFstates().length; i++)
-            if (node.getIMFstates()[i] != 2)
+        for (int i = 0; i < IMFstates.length; i++)
+            if (IMFstates[i] != 2){
                 allAreInSub = false;
-        if (node.getX() == grid.getxSub() && node.getY() == grid.getySub() && allAreInSub)
+                break;
+            }
+        if (x == grid.getxSub() && y == grid.getySub() && allAreInSub)
             return true;
         return false;
     }
@@ -215,9 +231,13 @@ public class MissionImpossible extends SearchProblem {
     @Override
     public String returnPath(generic.Node n) {
         Node curr = (Node) n;
+        String state=curr.getState();
+        String[] currentStates=state.split(";");
+        String deaths =(currentStates[0].split(","))[3];
+        String damages = currentStates[3];
         String res = "";
         Stack<String> stack = new Stack<String>();
-        stack.push(";" + curr.getDeaths() + ";" + convertArrayToString(curr.getDamages()) + ";" + SearchProblem.expandedNodes);
+        stack.push(";" + deaths + ";" + damages + ";" + SearchProblem.expandedNodes);
         boolean firstTime = true;
         while (curr.getParent() != null && curr.getParent().getOperator() != null) {
             if (firstTime) {
@@ -350,10 +370,12 @@ public class MissionImpossible extends SearchProblem {
     public static void main(String[] args) {
         //String grid = genGrid();
         //System.out.println(grid);
-        Grid grid1 = new Grid("10,10;6,3;4,8;9,1,2,4,4,0,3,9,6,4,3,4,0,5,1,6,1,9;97,49,25,17,94,3,96,35,98;3");
+        Grid grid1 = new Grid("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6");
         //Grid grid1 = new Grid(grid);
         System.out.println(grid1.toString());
         //"5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2"
-        System.out.println(solve("10,10;6,3;4,8;9,1,2,4,4,0,3,9,6,4,3,4,0,5,1,6,1,9;97,49,25,17,94,3,96,35,98;3", "UC", false));
+        //"15,15;5,10;14,14;0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8;81,13,40,38,52,63,66,36,13;1"
+        System.out.println();
+        System.out.println(solve("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6", "DF", false));
     }
 }

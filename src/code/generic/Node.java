@@ -4,7 +4,7 @@ import mission.Operator;
 
 import java.util.Arrays;
 
-public abstract class Node {
+public abstract class Node implements Comparable {
     String state;
     Node parent;
     Operator operator;
