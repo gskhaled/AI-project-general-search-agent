@@ -1,2 +1,0 @@
-TestMissionImpossible.java
- tests.TestMissionImpossible
