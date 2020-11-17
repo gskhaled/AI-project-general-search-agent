@@ -40,10 +40,10 @@ public class Node extends generic.Node {
         this.operator = operator;
         this.depth = depth;
         this.pathCost = pathCost;
-        this.state+=xPositions;
-        this.state+=yPositions;
-        this.state+=damagesString;
-        this.state+=IMFstatesString;
+        this.state += xPositions;
+        this.state += yPositions;
+        this.state += damagesString;
+        this.state += IMFstatesString;
 
     }
 
@@ -63,15 +63,14 @@ public class Node extends generic.Node {
 //    }
 
     public String formulateNodeToString() {
-        String[] currentStates=this.getState().split(";");
+        String[] currentStates = this.getState().split(";");
         String[] ethanPosCarryDamages = currentStates[0].split(",");
-        short x=Short.valueOf(ethanPosCarryDamages[0]);
-        short y=Short.valueOf(ethanPosCarryDamages[1]);
-        short c=Short.valueOf(ethanPosCarryDamages[2]);
+        short x = Short.valueOf(ethanPosCarryDamages[0]);
+        short y = Short.valueOf(ethanPosCarryDamages[1]);
+        short c = Short.valueOf(ethanPosCarryDamages[2]);
         String IMFstates = currentStates[4];
         return x + "," + y + ";" + IMFstates + ";" + c;
     }
-
 
     public Node getParent() {
         return parent;
@@ -88,23 +87,6 @@ public class Node extends generic.Node {
     public int getPathCost() {
         return pathCost;
     }
-
-    public void setParent(Node parent) {
-        this.parent = parent;
-    }
-
-    public void setOperator(Operator operator) {
-        this.operator = operator;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
-    }
-
-    public void setPathCost(int pathCost) {
-        this.pathCost = pathCost;
-    }
-
 
     public short getX() {
         return x;
@@ -165,15 +147,17 @@ public class Node extends generic.Node {
     public void setDamages(short damage, int i) {
         this.damages[i] = damage;
     }
-    public String getState(){
+
+    public String getState() {
         return this.state;
     }
+
     public static void main(String[] args) {
 
     }
 
-
     @Override
     public int compareTo(Object o) {
-        return this.getPathCost()<((Node)o).getPathCost()?-1:((Node)o).getPathCost()==this.getPathCost()?0:1;    }
+        return this.getPathCost() < ((Node) o).getPathCost() ? -1 : ((Node) o).getPathCost() == this.getPathCost() ? 0 : 1;
+    }
 }

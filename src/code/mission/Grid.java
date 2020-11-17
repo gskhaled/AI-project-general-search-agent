@@ -9,39 +9,39 @@ public class Grid {
     short yEthan;
     short xSub;
     short ySub;
-    short [] xPoss;
-    short [] yPoss;
-    short [] damages;
+    short[] xPoss;
+    short[] yPoss;
+    short[] damages;
     short c;
 
     public Grid(String grid) {
-        String [] s = grid.split(";");
-        String [] rc = s[0].split(",");
+        String[] s = grid.split(";");
+        String[] rc = s[0].split(",");
         rows = Short.parseShort(rc[0]);
         columns = Short.parseShort(rc[1]);
 
-        String [] xyEthan = s[1].split(",");
+        String[] xyEthan = s[1].split(",");
         xEthan = Short.parseShort(xyEthan[0]);
         yEthan = Short.parseShort(xyEthan[1]);
 
-        String [] xySub = s[2].split(",");
+        String[] xySub = s[2].split(",");
         xSub = Short.parseShort(xySub[0]);
         ySub = Short.parseShort(xySub[1]);
 
-        String [] xyPoss = s[3].split(",");
+        String[] xyPoss = s[3].split(",");
         xPoss = new short[xyPoss.length / 2];
         yPoss = new short[xyPoss.length / 2];
         int j = 0;
-        for(int i = 0; i < xyPoss.length; i++) {
+        for (int i = 0; i < xyPoss.length; i++) {
             xPoss[j] = Short.parseShort(xyPoss[i]);
             i++;
             yPoss[j] = Short.parseShort(xyPoss[i]);
             j++;
         }
 
-        String [] damagess = s[4].split(",");
+        String[] damagess = s[4].split(",");
         damages = new short[damagess.length];
-        for(int i = 0; i < damagess.length; i++) {
+        for (int i = 0; i < damagess.length; i++) {
             damages[i] = Short.parseShort(damagess[i]);
         }
 
@@ -102,25 +102,5 @@ public class Grid {
 
     public short getC() {
         return c;
-    }
-
-    public void setxEthan(short xEthan) {
-        this.xEthan = xEthan;
-    }
-
-    public void setyEthan(short yEthan) {
-        this.yEthan = yEthan;
-    }
-
-    public void setxPoss(short xPos, int i) {
-        this.xPoss[i] = xPos;
-    }
-
-    public void setyPoss(short yPos, int i) {
-        this.yPoss[i] = yPos;
-    }
-
-    public void setDamages(short health, int i) {
-        this.damages[i] = health;
     }
 }
