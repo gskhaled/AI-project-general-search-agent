@@ -134,8 +134,10 @@ public abstract class SearchProblem {
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
-                        if (problem.goalTest(curr))
+                        if (problem.goalTest(curr)){
+                            nodesPassed.clear();
                             return problem.returnPath(curr);
+                        }
                         expandedNodes++;
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
@@ -152,8 +154,10 @@ public abstract class SearchProblem {
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
-                        if (problem.goalTest((curr)))
+                        if (problem.goalTest(curr)){
+                            nodesPassed.clear();
                             return problem.returnPath(curr);
+                        }
                         expandedNodes++;
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
@@ -173,8 +177,10 @@ public abstract class SearchProblem {
                             String currString = curr.formulateNodeToString();
                             if (nodesPassed.get(currString) == null) {
                                 nodesPassed.put(currString, currString);
-                                if (problem.goalTest((curr)))
+                                if (problem.goalTest(curr)){
+                                    nodesPassed.clear();
                                     return problem.returnPath(curr);
+                                }
                                 expandedNodes++;
                                 for (int i = 0; i < problem.getOperators().length; i++) {
                                     Node node = problem.stateSpace(curr, problem.getOperators()[i]);
@@ -195,8 +201,10 @@ public abstract class SearchProblem {
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
-                        if (problem.goalTest((curr)))
+                        if (problem.goalTest(curr)){
+                            nodesPassed.clear();
                             return problem.returnPath(curr);
+                        }
                         expandedNodes++;
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);

@@ -630,7 +630,6 @@ public class TestMissionImpossible {
 		plan.replace("\r", "");
 		plan.replace("\n\r", "");
 		plan.replace("\t", "");
-		System.out.println("PLAN");
 		String[] actions = plan.split(",");
 		String[] gridArray=  grid.split(";");
 		String[] ethan = gridArray[1].split(",");
