@@ -126,7 +126,7 @@ public abstract class SearchProblem {
     public static String search(SearchProblem problem, QueuingFunction queuingFunction) {
         String res = "";
         ArrayList<Node> queue = new ArrayList<>();
-        queue.add(queue.size(),problem.getInitialState());
+        queue.add(queue.size(), problem.getInitialState());
         switch (queuingFunction) {
             case ENQUEUE_AT_END: {
                 while (!queue.isEmpty()) {
@@ -140,7 +140,7 @@ public abstract class SearchProblem {
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                             if (node != null)
-                                queue.add(queue.size(),node);
+                                queue.add(queue.size(), node);
                         }
                     }
                 }
@@ -158,7 +158,7 @@ public abstract class SearchProblem {
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                             if (node != null)
-                                queue.add(0,node);
+                                queue.add(0, node);
                         }
                     }
                 }
@@ -179,13 +179,13 @@ public abstract class SearchProblem {
                                 for (int i = 0; i < problem.getOperators().length; i++) {
                                     Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                                     if (node != null)
-                                        queue.add(0,node);
+                                        queue.add(0, node);
                                 }
                             }
                         }
                     }
                     currentDepth = currentDepth + 1;
-                    queue.add(0,problem.getInitialState());
+                    queue.add(0, problem.getInitialState());
                     nodesPassed.clear();
                 }
             }
@@ -214,7 +214,6 @@ public abstract class SearchProblem {
         return res;
     }
 
-
     public static ArrayList<generic.Node> priorityInsert(ArrayList<generic.Node> queue, generic.Node node) {
         boolean isInserted = false;
         if (!queue.isEmpty() && queue.get(queue.size()).getPathCost() > node.getPathCost())
@@ -225,7 +224,7 @@ public abstract class SearchProblem {
                     break;
                 }
         if (!isInserted)
-            queue.add(queue.size(),node);
+            queue.add(queue.size(), node);
         return queue;
     }
 
