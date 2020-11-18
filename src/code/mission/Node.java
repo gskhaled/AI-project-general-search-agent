@@ -80,30 +80,11 @@ public class Node extends generic.Node {
         return pathCost;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public String getState() {
         return this.state;
     }
 
     public static void main(String[] args) {
 
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        return this.getPathCost() < ((Node) o).getPathCost() ? -1 : ((Node) o).getPathCost() == this.getPathCost() ? 0 : 1;
     }
 }

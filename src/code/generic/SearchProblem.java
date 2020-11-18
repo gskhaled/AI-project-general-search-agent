@@ -126,7 +126,10 @@ public abstract class SearchProblem {
     public static String search(SearchProblem problem, QueuingFunction queuingFunction) {
         String res = "";
         ArrayList<Node> queue = new ArrayList<>();
-        queue.add(queue.size(), problem.getInitialState());
+        Node initialState = problem.getInitialState();
+        int heuristic = problem.calculateFirstHeuristic(initialState);
+        initialState.setHeuristicCost(heuristic);
+        queue.add(queue.size(), initialState);
         switch (queuingFunction) {
             case ENQUEUE_AT_END: {
                 while (!queue.isEmpty()) {
@@ -211,11 +214,103 @@ public abstract class SearchProblem {
                             if (node != null)
                                 queue.add(node);
                         }
-                        Collections.sort(queue);
+                        Collections.sort(queue, new PathCost());
                     }
                 }
             }
             break;
+            case HEURISTIC_FN1: {
+                while (!queue.isEmpty()) {
+                    Node curr = queue.remove(0);
+                    String currString = curr.formulateNodeToString();
+                    if (nodesPassed.get(currString) == null) {
+                        nodesPassed.put(currString, currString);
+                        if (problem.goalTest(curr)){
+                            nodesPassed.clear();
+                            return problem.returnPath(curr);
+                        }
+                        expandedNodes++;
+                        for (int i = 0; i < problem.getOperators().length; i++) {
+                            Node node = problem.stateSpace(curr, problem.getOperators()[i]);
+                            if (node != null){
+                                heuristic = problem.calculateFirstHeuristic(node);
+                                node.setHeuristicCost(heuristic);
+                                queue.add(node);
+                            }
+                        }
+                        Collections.sort(queue, new Heuristic());
+                    }
+                }
+            }
+            case HEURISTIC_FN2: {
+                while (!queue.isEmpty()) {
+                    Node curr = queue.remove(0);
+                    String currString = curr.formulateNodeToString();
+                    if (nodesPassed.get(currString) == null) {
+                        nodesPassed.put(currString, currString);
+                        if (problem.goalTest(curr)){
+                            nodesPassed.clear();
+                            return problem.returnPath(curr);
+                        }
+                        expandedNodes++;
+                        for (int i = 0; i < problem.getOperators().length; i++) {
+                            Node node = problem.stateSpace(curr, problem.getOperators()[i]);
+                            if (node != null){
+                                heuristic = problem.calculateSecondHeuristic(node ,false);
+                                node.setHeuristicCost(heuristic);
+                                queue.add(node);
+                            }
+                        }
+                        Collections.sort(queue, new Heuristic());
+                    }
+                }
+            }
+            case EVALUATION_FN1: {
+                while (!queue.isEmpty()) {
+                    Node curr = queue.remove(0);
+                    String currString = curr.formulateNodeToString();
+                    if (nodesPassed.get(currString) == null) {
+                        nodesPassed.put(currString, currString);
+                        if (problem.goalTest(curr)){
+                            nodesPassed.clear();
+                            return problem.returnPath(curr);
+                        }
+                        expandedNodes++;
+                        for (int i = 0; i < problem.getOperators().length; i++) {
+                            Node node = problem.stateSpace(curr, problem.getOperators()[i]);
+                            if (node != null){
+                                heuristic = problem.calculateFirstHeuristic(node);
+                                node.setHeuristicCost(heuristic);
+                                queue.add(node);
+                            }
+                        }
+                        Collections.sort(queue, new Evaluation());
+                    }
+                }
+            }
+            case EVALUATION_FN2: {
+                while (!queue.isEmpty()) {
+                    Node curr = queue.remove(0);
+                    String currString = curr.formulateNodeToString();
+                    if (nodesPassed.get(currString) == null) {
+                        nodesPassed.put(currString, currString);
+                        if (problem.goalTest(curr)){
+                            nodesPassed.clear();
+                            return problem.returnPath(curr);
+                        }
+                        expandedNodes++;
+                        for (int i = 0; i < problem.getOperators().length; i++) {
+                            Node node = problem.stateSpace(curr, problem.getOperators()[i]);
+                            if (node != null){
+                                heuristic = problem.calculateSecondHeuristic(node ,false);
+                                node.setHeuristicCost(heuristic);
+                                queue.add(node);
+                            }
+                        }
+                        Collections.sort(queue, new Heuristic());
+                    }
+                }
+            }
             default:
                 return "";
         }
@@ -235,5 +330,9 @@ public abstract class SearchProblem {
             queue.add(queue.size(), node);
         return queue;
     }
+
+    public abstract int calculateFirstHeuristic(Node node);
+
+    public abstract int calculateSecondHeuristic(Node node, boolean print);
 
 }

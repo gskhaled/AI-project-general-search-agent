@@ -333,13 +333,131 @@ public class MissionImpossible extends SearchProblem {
                 stack.push(curr.getOperator().toString().toLowerCase());
                 firstTime = false;
             } else
-                stack.push(curr.getOperator().toString().toLowerCase() + ",");
+                stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */+ ",");
             curr = curr.getParent();
         }
-        stack.push(curr.getOperator().toString().toLowerCase() + ",");
+        stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */+ ",");
         while (!stack.isEmpty())
             res += stack.pop();
+        int s =0;
+        for(int i = 0; i < damages.split(",").length; i++)
+            s+= Integer.parseInt(damages.split(",")[i]);
+        System.out.println("TOTAL DAMAGES " + s);
         return res;
+    }
+
+    @Override
+    public int calculateFirstHeuristic(generic.Node n) {
+        int cost = 0;
+        String[] currentStates = n.getState().split(";");
+        String[] ethanPosCarryDamages = currentStates[0].split(",");
+        short xEthan = Short.valueOf(ethanPosCarryDamages[0]);
+        short yEthan = Short.valueOf(ethanPosCarryDamages[1]);
+        String IMFstates = currentStates[4];
+        short[] xPoss = grid.getxPoss();
+        short[] yPoss = grid.getyPoss();
+        short[] damages = grid.getDamages();
+        for (int i = 0; i < xPoss.length; i++) {
+            int xDiff = Math.abs(xPoss[i] - xEthan);
+            int yDiff = Math.abs(yPoss[i] - yEthan);
+            int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
+            if (Integer.parseInt(IMFstates.split(",")[i]) == 0)
+                if (damages[i] + (distance * 2) >= 100)
+                    cost += 100;
+                else
+                    cost += damages[i] + (distance * 2);
+        }
+        return cost;
+    }
+
+    @Override
+    public int calculateSecondHeuristic(generic.Node n, boolean print) {
+        if(print) {
+            int cost = 0;
+            String[] currentStates = n.getState().split(";");
+            String[] ethanPosCarryDamages = currentStates[0].split(",");
+            short xEthan = Short.valueOf(ethanPosCarryDamages[0]);
+            short yEthan = Short.valueOf(ethanPosCarryDamages[1]);
+            short xSub = grid.getxSub();
+            short ySub = grid.getySub();
+            short c = Short.valueOf(ethanPosCarryDamages[2]);
+            String IMFstates = currentStates[4];
+            short[] xPoss = grid.getxPoss();
+            short[] yPoss = grid.getyPoss();
+            System.out.println(Arrays.asList(IMFstates.split(",")));
+            int wasaltohom = Collections.frequency(Arrays.asList(IMFstates.split(",")), "1") + Collections.frequency(Arrays.asList(IMFstates.split(",")), "2");
+            System.out.println("wasaltohom before loop " + wasaltohom + " and c is " + c);
+            for(int i = wasaltohom; i < xPoss.length;) {
+                int ontheway = 0;
+                int damage = 0;
+                while(ontheway <= c && i < xPoss.length) {
+                    int xDiff = Math.abs(xPoss[i] - xEthan);
+                    int yDiff = Math.abs(yPoss[i] - yEthan);
+                    int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
+                    damage = distance * 2;
+                    System.out.println("at i " + i + " damage is " + damage + " distance is " + distance + " & ontheway is " + ontheway);
+                    cost += damage;
+                    ontheway++;
+                    if(i + 1 == xPoss.length)
+                        break;
+                    i++;
+                }
+                wasaltohom += ontheway;
+                xEthan = xPoss[i];
+                yEthan = yPoss[i];
+                int xDiff = Math.abs(xEthan - xSub);
+                int yDiff = Math.abs(yEthan - ySub);
+                int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
+                damage = distance * 2 * (xPoss.length - wasaltohom);
+                cost += damage;
+                System.out.println("at i AFTER " + i + " damage is " + damage + " cost is " + cost);
+                if(i + 1 == xPoss.length)
+                    break;
+                xEthan = xSub;
+                yEthan = ySub;
+            }
+            return cost;
+        }
+        int cost = 0;
+        String[] currentStates = n.getState().split(";");
+        String[] ethanPosCarryDamages = currentStates[0].split(",");
+        short xEthan = Short.valueOf(ethanPosCarryDamages[0]);
+        short yEthan = Short.valueOf(ethanPosCarryDamages[1]);
+        short xSub = grid.getxSub();
+        short ySub = grid.getySub();
+        short c = Short.valueOf(ethanPosCarryDamages[2]);
+        String IMFstates = currentStates[4];
+        short[] xPoss = grid.getxPoss();
+        short[] yPoss = grid.getyPoss();
+        int wasaltohom = Collections.frequency(Arrays.asList(IMFstates.split(",")), "1") + Collections.frequency(Arrays.asList(IMFstates.split(",")), "2");
+        for(int i = wasaltohom; i < xPoss.length;) {
+            int ontheway = 0;
+            int damage = 0;
+            while(ontheway <= c && i < xPoss.length) {
+                int xDiff = Math.abs(xPoss[i] - xEthan);
+                int yDiff = Math.abs(yPoss[i] - yEthan);
+                int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
+                damage = distance * 2;
+                cost += damage;
+                ontheway++;
+                if(i + 1 == xPoss.length)
+                    break;
+                i++;
+            }
+            wasaltohom += ontheway;
+            xEthan = xPoss[i];
+            yEthan = yPoss[i];
+            int xDiff = Math.abs(xEthan - xSub);
+            int yDiff = Math.abs(yEthan - ySub);
+            int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
+            damage = distance * 2 * (xPoss.length - wasaltohom);
+            cost += damage;
+            if(i + 1 == xPoss.length)
+                break;
+            xEthan = xSub;
+            yEthan = ySub;
+        }
+        return cost;
     }
 
     public short[] copyArray(String[] arr) {
@@ -367,12 +485,12 @@ public class MissionImpossible extends SearchProblem {
     public static void main(String[] args) {
         //String grid = genGrid();
         //System.out.println(grid);
-        Grid grid1 = new Grid("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6");
+        Grid grid1 = new Grid("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;1");
         //Grid grid1 = new Grid(grid);
         System.out.println(grid1.toString());
         //"5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2"
         //"15,15;5,10;14,14;0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8;81,13,40,38,52,63,66,36,13;1"
-        System.out.println();
-        System.out.println(solve("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6", "BF", false));
+        System.out.println(solve("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;1", "ID", false));
+
     }
 }

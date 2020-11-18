@@ -4,12 +4,13 @@ import mission.Operator;
 
 import java.util.Arrays;
 
-public abstract class Node implements Comparable {
+public abstract class Node {
     String state;
     Node parent;
     Operator operator;
     int depth;
     int pathCost;
+    int heuristicCost;
 
     public Node getParent() {
         return parent;
@@ -29,6 +30,14 @@ public abstract class Node implements Comparable {
 
     public String getState() {
         return state;
+    }
+
+    public int getHeuristicCost() {
+        return heuristicCost;
+    }
+
+    public void setHeuristicCost(int cost) {
+        this.heuristicCost = cost;
     }
 
     public abstract String formulateNodeToString();
