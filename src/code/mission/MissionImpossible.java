@@ -13,9 +13,9 @@ public class MissionImpossible extends SearchProblem {
 
     private Grid grid;
     private Node initialState;
-    private Operator[] operators;
+    private static String[] operators = {"UP", "DOWN", "RIGHT", "LEFT", "CARRY", "DROP"};
 
-    public MissionImpossible(Grid grid, Node initialState, Operator[] operators) {
+    public MissionImpossible(Grid grid, Node initialState, String[] operators) {
         this.grid = grid;
         this.initialState = initialState;
         this.operators = operators;
@@ -35,8 +35,9 @@ public class MissionImpossible extends SearchProblem {
         Node initialState = new Node(g.getxEthan(), g.getyEthan(), g.getC(), (short) 0,
                 g.getxPoss(), g.getyPoss(), g.getDamages(), IMFstates, null,
                 null, 0, 0);
+        initialState.setPriority(0);
 
-        SearchProblem MI = new MissionImpossible(g, initialState, Operator.values());
+        SearchProblem MI = new MissionImpossible(g, initialState, operators);
         QueuingFunction qingFun;
 
         switch (strategy) {
@@ -127,9 +128,12 @@ public class MissionImpossible extends SearchProblem {
 //        print(visualise(height, width, xEthan, yEthan, xSub, ySub, imfs));
         return res;
     }
-
     @Override
-    public generic.Node stateSpace(generic.Node genericNode, Operator operator) {
+    public String[] getOperators(){
+        return operators;
+    }
+    @Override
+    public generic.Node stateSpace(generic.Node genericNode, String operator) {
         Node node = (mission.Node) genericNode;
         String state = node.getState();
         String[] currentStates = state.split(";");
@@ -145,10 +149,10 @@ public class MissionImpossible extends SearchProblem {
         short[] IMFstates = copyArray(currentStates[4].split(","));
 
         switch (operator) {
-            case UP: {
+            case "UP": {
                 if (x == 0)
                     return null;
-                if (node.getOperator() != null && node.getOperator() == Operator.DOWN)
+                if (node.getOperator() != null && node.getOperator().equals("DOWN"))
                     return null;
                 int pathCost = node.getPathCost();
                 for (int i = 0; i < damages.length; i++) {
@@ -165,13 +169,13 @@ public class MissionImpossible extends SearchProblem {
                         xPoss[i] = (short) (x - 1);
                 }
                 Node result = new Node((short) (x - 1), y, c, deaths, xPoss,
-                        yPoss, damages, IMFstates, node, Operator.UP, node.getDepth() + 1, pathCost);
+                        yPoss, damages, IMFstates, node, "UP", node.getDepth() + 1, pathCost);
                 return result;
             }
-            case DOWN: {
+            case "DOWN": {
                 if ((x == grid.getRows() - 1))
                     return null;
-                if (node.getOperator() != null && node.getOperator() == Operator.UP)
+                if (node.getOperator() != null && node.getOperator().equals("UP"))
                     return null;
                 int pathCost = node.getPathCost();
                 for (int i = 0; i < damages.length; i++) {
@@ -188,11 +192,11 @@ public class MissionImpossible extends SearchProblem {
                         xPoss[i] = (short) (x + 1);
                 }
                 Node result = new Node((short) (x + 1), y, c, deaths, xPoss,
-                        yPoss, damages, IMFstates, node, Operator.DOWN, node.getDepth() + 1, pathCost);
+                        yPoss, damages, IMFstates, node, "DOWN", node.getDepth() + 1, pathCost);
                 return result;
             }
-            case RIGHT: {
-                if (y == grid.getColumns() - 1 || (node.getOperator() != null && node.getOperator() == Operator.LEFT))
+            case "RIGHT": {
+                if (y == grid.getColumns() - 1 || (node.getOperator() != null && node.getOperator().equals("LEFT")))
                     return null;
                 else {
                     int pathCost = node.getPathCost();
@@ -210,12 +214,12 @@ public class MissionImpossible extends SearchProblem {
                             yPoss[i] = (short) (y + 1);
                     }
                     Node result = new Node(x, (short) (y + 1), c, deaths, xPoss,
-                            yPoss, damages, IMFstates, node, Operator.RIGHT, node.getDepth() + 1, pathCost);
+                            yPoss, damages, IMFstates, node, "RIGHT", node.getDepth() + 1, pathCost);
                     return result;
                 }
             }
-            case LEFT: {
-                if (y == 0 || (node.getOperator() != null && node.getOperator() == Operator.RIGHT))
+            case "LEFT": {
+                if (y == 0 || (node.getOperator() != null && node.getOperator().equals("RIGHT")))
                     return null;
                 else {
                     int pathCost = node.getPathCost();
@@ -233,14 +237,14 @@ public class MissionImpossible extends SearchProblem {
                             yPoss[i] = (short) (y - 1);
                     }
                     Node result = new Node(x, (short) (y - 1), c, deaths, xPoss,
-                            yPoss, damages, IMFstates, node, Operator.LEFT, node.getDepth() + 1, pathCost);
+                            yPoss, damages, IMFstates, node, "LEFT", node.getDepth() + 1, pathCost);
                     return result;
                 }
             }
 
-            case CARRY: {
+            case "CARRY": {
                 boolean imfCarried = false;
-                if (node.getOperator() != null && node.getOperator() == Operator.DROP)
+                if (node.getOperator() != null && node.getOperator().equals("DROP"))
                     return null;
                 for (int i = 0; i < xPoss.length; i++) {
                     if (xPoss[i] == x && yPoss[i] == y && IMFstates[i] == 0 && c > 0) {
@@ -263,12 +267,12 @@ public class MissionImpossible extends SearchProblem {
                     }
                 if (imfCarried)
                     return new Node(x, y, c, deaths, xPoss,
-                            yPoss, damages, IMFstates, node, Operator.CARRY, node.getDepth() + 1, pathCost);
+                            yPoss, damages, IMFstates, node, "CARRY", node.getDepth() + 1, pathCost);
                 else
                     return null;
             }
-            case DROP: {
-                if (node.getOperator() != null && node.getOperator() == Operator.CARRY)
+            case "DROP": {
+                if (node.getOperator() != null && node.getOperator().equals("CARRY"))
                     return null;
                 if (c == grid.getC() || !(x == grid.getxSub() && y == grid.getySub()))
                     return null;
@@ -290,7 +294,7 @@ public class MissionImpossible extends SearchProblem {
                         }
                     }
                 return new Node(x, y, c, deaths, xPoss, yPoss, damages, IMFstates, node,
-                        Operator.DROP, node.getDepth() + 1, pathCost);
+                        "DROP", node.getDepth() + 1, pathCost);
             }
             default:
                 return null;
@@ -333,15 +337,15 @@ public class MissionImpossible extends SearchProblem {
                 stack.push(curr.getOperator().toString().toLowerCase());
                 firstTime = false;
             } else
-                stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */+ ",");
+                stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
             curr = curr.getParent();
         }
-        stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */+ ",");
+        stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
         while (!stack.isEmpty())
             res += stack.pop();
-        int s =0;
-        for(int i = 0; i < damages.split(",").length; i++)
-            s+= Integer.parseInt(damages.split(",")[i]);
+        int s = 0;
+        for (int i = 0; i < damages.split(",").length; i++)
+            s += Integer.parseInt(damages.split(",")[i]);
         System.out.println("TOTAL DAMAGES " + s);
         return res;
     }
@@ -372,7 +376,7 @@ public class MissionImpossible extends SearchProblem {
 
     @Override
     public int calculateSecondHeuristic(generic.Node n, boolean print) {
-        if(print) {
+        if (print) {
             int cost = 0;
             String[] currentStates = n.getState().split(";");
             String[] ethanPosCarryDamages = currentStates[0].split(",");
@@ -387,10 +391,10 @@ public class MissionImpossible extends SearchProblem {
             System.out.println(Arrays.asList(IMFstates.split(",")));
             int wasaltohom = Collections.frequency(Arrays.asList(IMFstates.split(",")), "1") + Collections.frequency(Arrays.asList(IMFstates.split(",")), "2");
             System.out.println("wasaltohom before loop " + wasaltohom + " and c is " + c);
-            for(int i = wasaltohom; i < xPoss.length;) {
+            for (int i = wasaltohom; i < xPoss.length; ) {
                 int ontheway = 0;
                 int damage = 0;
-                while(ontheway <= c && i < xPoss.length) {
+                while (ontheway <= c && i < xPoss.length) {
                     int xDiff = Math.abs(xPoss[i] - xEthan);
                     int yDiff = Math.abs(yPoss[i] - yEthan);
                     int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
@@ -398,7 +402,7 @@ public class MissionImpossible extends SearchProblem {
                     System.out.println("at i " + i + " damage is " + damage + " distance is " + distance + " & ontheway is " + ontheway);
                     cost += damage;
                     ontheway++;
-                    if(i + 1 == xPoss.length)
+                    if (i + 1 == xPoss.length)
                         break;
                     i++;
                 }
@@ -411,7 +415,7 @@ public class MissionImpossible extends SearchProblem {
                 damage = distance * 2 * (xPoss.length - wasaltohom);
                 cost += damage;
                 System.out.println("at i AFTER " + i + " damage is " + damage + " cost is " + cost);
-                if(i + 1 == xPoss.length)
+                if (i + 1 == xPoss.length)
                     break;
                 xEthan = xSub;
                 yEthan = ySub;
@@ -430,17 +434,17 @@ public class MissionImpossible extends SearchProblem {
         short[] xPoss = grid.getxPoss();
         short[] yPoss = grid.getyPoss();
         int wasaltohom = Collections.frequency(Arrays.asList(IMFstates.split(",")), "1") + Collections.frequency(Arrays.asList(IMFstates.split(",")), "2");
-        for(int i = wasaltohom; i < xPoss.length;) {
+        for (int i = wasaltohom; i < xPoss.length; ) {
             int ontheway = 0;
             int damage = 0;
-            while(ontheway <= c && i < xPoss.length) {
+            while (ontheway <= c && i < xPoss.length) {
                 int xDiff = Math.abs(xPoss[i] - xEthan);
                 int yDiff = Math.abs(yPoss[i] - yEthan);
                 int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
                 damage = distance * 2;
                 cost += damage;
                 ontheway++;
-                if(i + 1 == xPoss.length)
+                if (i + 1 == xPoss.length)
                     break;
                 i++;
             }
@@ -452,7 +456,7 @@ public class MissionImpossible extends SearchProblem {
             int distance = xDiff + yDiff + 1; // manhattan distance + 1 for carry
             damage = distance * 2 * (xPoss.length - wasaltohom);
             cost += damage;
-            if(i + 1 == xPoss.length)
+            if (i + 1 == xPoss.length)
                 break;
             xEthan = xSub;
             yEthan = ySub;
@@ -467,9 +471,6 @@ public class MissionImpossible extends SearchProblem {
         return res;
     }
 
-    public Operator[] getOperators() {
-        return operators;
-    }
 
     public static String convertArrayToString(short[] arr) {
         String res = "";
@@ -485,12 +486,12 @@ public class MissionImpossible extends SearchProblem {
     public static void main(String[] args) {
         //String grid = genGrid();
         //System.out.println(grid);
-        Grid grid1 = new Grid("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;1");
+        Grid grid1 = new Grid("9,9;8,7;5,0;0,8,2,6,5,6,1,7,5,5,8,3,2,2,2,5,0,7;11,13,75,50,56,44,26,77,18;2");
         //Grid grid1 = new Grid(grid);
         System.out.println(grid1.toString());
         //"5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2"
         //"15,15;5,10;14,14;0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8;81,13,40,38,52,63,66,36,13;1"
-        System.out.println(solve("5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;1", "ID", false));
+        System.out.println(solve("9,9;8,7;5,0;0,8,2,6,5,6,1,7,5,5,8,3,2,2,2,5,0,7;11,13,75,50,56,44,26,77,18;2", "ID", false));
 
     }
 }

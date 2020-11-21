@@ -1,15 +1,16 @@
 package mission;
 
-import java.util.Arrays;
 
-public class Node extends generic.Node {
+import java.util.Comparator;
+
+public class Node extends generic.Node    {
     private Node parent;
-    private Operator operator;
+    private String operator;
     private int depth;
     private int pathCost;
     private String state;
 
-    public Node(short x, short y, short c, short deaths, short[] xPoss, short[] yPoss, short[] damages, short[] IMFstates, Node parent, Operator operator, int depth, int pathCost) {
+    public Node(short x, short y, short c, short deaths, short[] xPoss, short[] yPoss, short[] damages, short[] IMFstates, Node parent, String operator, int depth, int pathCost ) {
         this.parent = parent;
         this.state = "";
         this.state += x + "," + y + "," + c + "," + deaths + ";";
@@ -68,7 +69,7 @@ public class Node extends generic.Node {
         return parent;
     }
 
-    public Operator getOperator() {
+    public String getOperator() {
         return operator;
     }
 
@@ -80,11 +81,12 @@ public class Node extends generic.Node {
         return pathCost;
     }
 
+
+
     public String getState() {
         return this.state;
     }
 
-    public static void main(String[] args) {
-
-    }
 }
+
+

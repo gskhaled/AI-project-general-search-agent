@@ -1,139 +1,34 @@
 package generic;
-
-import mission.Operator;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 public abstract class SearchProblem {
     private static HashMap<String, String> nodesPassed = new HashMap<String, String>();
-    private generic.Operator[] operators;
+    private String[] operators;
     public static int expandedNodes = 0;
 
     // returns state given grid, current node and operator to perform
-    public abstract Node stateSpace(Node node, Operator operator);
+    public abstract Node stateSpace(Node node, String operator);
 
     //returns true if a given node passes the goal test, otherwise false
     public abstract Boolean goalTest(Node node);
 
     public abstract Node getInitialState();
 
-    public abstract Operator[] getOperators();
+    public abstract String[] getOperators();
 
     public abstract String returnPath(Node n);
 
-    /*public static String search(SearchProblem problem, QueuingFunction queuingFunction) {
-            String res = "";
-            LinkedList<Node> queue = new LinkedList<Node>();
-            queue.addLast(problem.getInitialState());
-
-            switch (queuingFunction) {
-            case ENQUEUE_AT_END: {
-                while (!queue.isEmpty()) {
-                    Node curr = queue.removeFirst();
-                    String stringCurr = formulateNodeToString(curr);
-                    if (nodesPassed.get(stringCurr) == null) {
-                        nodesPassed.put(stringCurr, stringCurr);
-                        if (curr != null) {
-                            if (problem.goalTest((curr)))
-                                return returnPath(curr) + ";" + curr.getDeaths() + ";" + convertArrayToString(curr.getDamages()) + ";" + expandedNodes;
-                            expandedNodes++;
-                            for (int i = 0; i < problem.getOperators().length; i++) {
-                                Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                                if (node != null)
-                                    queue.addLast(node);
-                            }
-                        }
-                    }
-                }
-            }
-            break;
-            case ENQUEUE_AT_FRONT: {
-                while (!queue.isEmpty()) {
-                    Node curr = queue.removeFirst();
-                    String stringCurr = formulateNodeToString(curr);
-                    if (nodesPassed.get(stringCurr) == null) {
-                        nodesPassed.put(stringCurr, stringCurr);
-                        if (curr != null) {
-                            if (problem.goalTest((curr)))
-                                return returnPath(curr) + ";" + curr.getDeaths() + ";" + convertArrayToString(curr.getDamages()) + ";" + expandedNodes;
-                            expandedNodes++;
-                            for (int i = 0; i < problem.getOperators().length; i++) {
-                                Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                                if (node != null)
-                                    queue.addFirst(node);
-                            }
-                        }
-                    }
-                }
-            }
-            break;
-            case ENQUEUE_AT_FRONT_IDS: {
-                int currentDepth = 0;
-                while (true) {
-                    while (!queue.isEmpty()) {
-                        Node curr = queue.removeFirst();
-                        if (!(curr.getDepth() > currentDepth)) {
-                            String stringCurr = formulateNodeToString(curr);
-                            if (nodesPassed.get(stringCurr) == null) {
-                                nodesPassed.put(stringCurr, stringCurr);
-                                if (curr != null) {
-                                    if (problem.goalTest((curr)))
-                                        return returnPath(curr) + ";" + curr.getDeaths() + ";" + convertArrayToString(curr.getDamages()) + ";" + expandedNodes;
-                                    expandedNodes++;
-                                    for (int i = 0; i < problem.getOperators().length; i++) {
-                                        Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                                        if (node != null)
-                                            queue.addLast(node);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    currentDepth = currentDepth + 1;
-                    queue.addLast(problem.getInitialState());
-                    nodesPassed.clear();
-                }
-            }
-            case ORDERED_INSERT: {
-                while (!queue.isEmpty()) {
-                    Node curr = queue.removeFirst();
-
-                    String stringCurr = formulateNodeToString(curr);
-                    if (nodesPassed.get(stringCurr) == null) {
-                        nodesPassed.put(stringCurr, stringCurr);
-                        if (curr != null) {
-                            if (problem.goalTest((curr)))
-                                return returnPath(curr) + ";" + curr.getDeaths() + ";" + convertArrayToString(curr.getDamages()) + ";" + expandedNodes;
-                            expandedNodes++;
-                            for (int i = 0; i < problem.getOperators().length; i++) {
-                                Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                                if (node != null)
-                                    queue.addLast(node);
-                            }
-                        }
-                    }
-                }
-            }
-            break;
-            default:
-                return "";
-        }
-        return res;
-    }*/
     public static String search(SearchProblem problem, QueuingFunction queuingFunction) {
         String res = "";
-        ArrayList<Node> queue = new ArrayList<>();
+        PriorityQueue<Node> queue = new PriorityQueue<>();
         Node initialState = problem.getInitialState();
         int heuristic = problem.calculateFirstHeuristic(initialState);
         initialState.setHeuristicCost(heuristic);
-        queue.add(queue.size(), initialState);
+        queue.add(initialState);
         switch (queuingFunction) {
             case ENQUEUE_AT_END: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.remove(0);
+                    Node curr = queue.remove();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -145,15 +40,16 @@ public abstract class SearchProblem {
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
                             if (node != null)
-                                queue.add(queue.size(), node);
+                                queue.add(node);
                         }
                     }
                 }
             }
             break;
             case ENQUEUE_AT_FRONT: {
+                int priority = Integer.MAX_VALUE;
                 while (!queue.isEmpty()) {
-                    Node curr = queue.remove(0);
+                    Node curr = queue.poll();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -162,21 +58,26 @@ public abstract class SearchProblem {
                             return problem.returnPath(curr);
                         }
                         expandedNodes++;
-                        for (int i = 0; i < problem.getOperators().length; i++) {
+                        for (int i =problem.getOperators().length-1 ; i >=0; i--) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                            if (node != null)
-                                queue.add(0, node);
+                            if (node != null) {
+                                node.setPriority(priority);
+                                queue.add(node);
+                                priority -=1;
+                            }
                         }
                     }
                 }
             }
             break;
             case ENQUEUE_AT_FRONT_IDS: {
+                int priority = Integer.MAX_VALUE;
                 int currentDepth = 0;
                 while (true) {
+
                     while (!queue.isEmpty()) {
-                        Node curr = queue.remove(0);
-                        if (!(curr.getDepth() > currentDepth)) {
+                        Node curr = queue.poll();
+                        if (curr.getDepth() <= currentDepth) {
                             String currString = curr.formulateNodeToString();
                             if (nodesPassed.get(currString) == null) {
                                 nodesPassed.put(currString, currString);
@@ -185,22 +86,26 @@ public abstract class SearchProblem {
                                     return problem.returnPath(curr);
                                 }
                                 expandedNodes++;
-                                for (int i = 0; i < problem.getOperators().length; i++) {
+                                for (int i = problem.getOperators().length-1; i>=0; i--) {
                                     Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                                    if (node != null)
-                                        queue.add(0, node);
+
+                                    if (node != null) {
+                                        node.setPriority(priority);
+                                        queue.add(node);
+                                        priority -= 1;
+                                    }
                                 }
                             }
                         }
                     }
-                    currentDepth = currentDepth + 1;
-                    queue.add(0, problem.getInitialState());
+                    currentDepth += 1;
+                    queue.add(problem.getInitialState());
                     nodesPassed.clear();
                 }
             }
             case ORDERED_INSERT: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.remove(0);
+                    Node curr = queue.poll();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -211,17 +116,19 @@ public abstract class SearchProblem {
                         expandedNodes++;
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                            if (node != null)
+
+                            if (node != null) {
+                                node.setPriority(node.getPathCost());
                                 queue.add(node);
+                            }
                         }
-                        Collections.sort(queue, new PathCost());
                     }
                 }
             }
             break;
             case HEURISTIC_FN1: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.remove(0);
+                    Node curr = queue.poll();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -235,16 +142,16 @@ public abstract class SearchProblem {
                             if (node != null){
                                 heuristic = problem.calculateFirstHeuristic(node);
                                 node.setHeuristicCost(heuristic);
+                                node.setPriority(node.getHeuristicCost());
                                 queue.add(node);
                             }
                         }
-                        Collections.sort(queue, new Heuristic());
                     }
                 }
             }
             case HEURISTIC_FN2: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.remove(0);
+                    Node curr = queue.poll();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -258,16 +165,17 @@ public abstract class SearchProblem {
                             if (node != null){
                                 heuristic = problem.calculateSecondHeuristic(node ,false);
                                 node.setHeuristicCost(heuristic);
+                                node.setPriority(node.getHeuristicCost());
                                 queue.add(node);
                             }
                         }
-                        Collections.sort(queue, new Heuristic());
+
                     }
                 }
             }
             case EVALUATION_FN1: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.remove(0);
+                    Node curr = queue.poll();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -281,16 +189,16 @@ public abstract class SearchProblem {
                             if (node != null){
                                 heuristic = problem.calculateFirstHeuristic(node);
                                 node.setHeuristicCost(heuristic);
+                                node.setPriority(node.getPathCost() + node.getHeuristicCost());
                                 queue.add(node);
                             }
                         }
-                        Collections.sort(queue, new Evaluation());
                     }
                 }
             }
             case EVALUATION_FN2: {
                 while (!queue.isEmpty()) {
-                    Node curr = queue.remove(0);
+                    Node curr = queue.poll();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
@@ -304,10 +212,10 @@ public abstract class SearchProblem {
                             if (node != null){
                                 heuristic = problem.calculateSecondHeuristic(node ,false);
                                 node.setHeuristicCost(heuristic);
+                                node.setPriority(node.getPathCost() + node.getHeuristicCost());
                                 queue.add(node);
                             }
                         }
-                        Collections.sort(queue, new Heuristic());
                     }
                 }
             }
@@ -316,7 +224,6 @@ public abstract class SearchProblem {
         }
         return res;
     }
-
     public static ArrayList<generic.Node> priorityInsert(ArrayList<generic.Node> queue, generic.Node node) {
         boolean isInserted = false;
         if (!queue.isEmpty() && queue.get(queue.size()).getPathCost() > node.getPathCost())

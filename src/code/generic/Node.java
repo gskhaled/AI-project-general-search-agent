@@ -1,22 +1,21 @@
 package generic;
 
-import mission.Operator;
 
-import java.util.Arrays;
 
-public abstract class Node {
+public abstract class Node implements Comparable<Node> {
     String state;
     Node parent;
-    Operator operator;
+    String operator;
     int depth;
     int pathCost;
     int heuristicCost;
+    int priority;
 
     public Node getParent() {
         return parent;
     }
 
-    public Operator getOperator() {
+    public String getOperator() {
         return operator;
     }
 
@@ -40,6 +39,14 @@ public abstract class Node {
         this.heuristicCost = cost;
     }
 
+    public int getPriority() { return priority; }
+
+    public void setPriority(int priority){ this.priority = priority; }
+
     public abstract String formulateNodeToString();
 
+    @Override
+    public int compareTo(generic.Node o) {
+        return this.getPriority() <  o.getPriority() ? -1 : o.getPriority() == this.getPriority() ? 0 : 1;
+    }
 }
