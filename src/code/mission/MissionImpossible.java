@@ -334,13 +334,13 @@ public class MissionImpossible extends SearchProblem {
         boolean firstTime = true;
         while (curr.getParent() != null && curr.getParent().getOperator() != null) {
             if (firstTime) {
-                stack.push(curr.getOperator().toString().toLowerCase());
+                stack.push(curr.getOperator().toLowerCase());
                 firstTime = false;
             } else
-                stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
+                stack.push(curr.getOperator().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
             curr = curr.getParent();
         }
-        stack.push(curr.getOperator().toString().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
+        stack.push(curr.getOperator().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
         while (!stack.isEmpty())
             res += stack.pop();
         int s = 0;
