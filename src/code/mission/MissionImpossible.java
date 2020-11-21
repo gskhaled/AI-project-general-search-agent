@@ -486,12 +486,12 @@ public class MissionImpossible extends SearchProblem {
     public static void main(String[] args) {
         //String grid = genGrid();
         //System.out.println(grid);
-        Grid grid1 = new Grid("9,9;8,7;5,0;0,8,2,6,5,6,1,7,5,5,8,3,2,2,2,5,0,7;11,13,75,50,56,44,26,77,18;2");
+        Grid grid1 = new Grid("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6");
         //Grid grid1 = new Grid(grid);
         System.out.println(grid1.toString());
         //"5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2"
         //"15,15;5,10;14,14;0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8;81,13,40,38,52,63,66,36,13;1"
-        System.out.println(solve("9,9;8,7;5,0;0,8,2,6,5,6,1,7,5,5,8,3,2,2,2,5,0,7;11,13,75,50,56,44,26,77,18;2", "ID", false));
+        System.out.println(solve("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6", "BF", false));
 
     }
 }

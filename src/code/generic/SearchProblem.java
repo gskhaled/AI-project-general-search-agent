@@ -27,20 +27,24 @@ public abstract class SearchProblem {
         queue.add(initialState);
         switch (queuingFunction) {
             case ENQUEUE_AT_END: {
+                int priority = 0;
                 while (!queue.isEmpty()) {
                     Node curr = queue.remove();
                     String currString = curr.formulateNodeToString();
                     if (nodesPassed.get(currString) == null) {
                         nodesPassed.put(currString, currString);
-                        if (problem.goalTest(curr)){
+                        if (problem.goalTest(curr)) {
                             nodesPassed.clear();
                             return problem.returnPath(curr);
                         }
                         expandedNodes++;
                         for (int i = 0; i < problem.getOperators().length; i++) {
                             Node node = problem.stateSpace(curr, problem.getOperators()[i]);
-                            if (node != null)
+                            if (node != null) {
+                                node.setPriority(priority);
                                 queue.add(node);
+                                priority += 1;
+                            }
                         }
                     }
                 }
@@ -71,10 +75,10 @@ public abstract class SearchProblem {
             }
             break;
             case ENQUEUE_AT_FRONT_IDS: {
-                int priority = Integer.MAX_VALUE;
+                int priority ;
                 int currentDepth = 0;
                 while (true) {
-
+                    priority = Integer.MAX_VALUE;
                     while (!queue.isEmpty()) {
                         Node curr = queue.poll();
                         if (curr.getDepth() <= currentDepth) {
