@@ -6,7 +6,7 @@
 !/src
 !/src/code/generic/*
 !/src/code/mission/*
-!/src/tests
+!/src/tests/*
 !/.github
 !build.gradle
 !README.md
