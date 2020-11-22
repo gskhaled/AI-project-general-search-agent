@@ -1,5 +1,8 @@
 package mission;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +16,7 @@ public class MissionImpossible extends SearchProblem {
 	private Grid grid;
 	private Node initialState;
 	private static String[] operators = { "UP", "DOWN", "RIGHT", "LEFT", "CARRY", "DROP" };
+	private static boolean vis = false;
 
 	public MissionImpossible(Grid grid, Node initialState) {
 		this.grid = grid;
@@ -35,6 +39,7 @@ public class MissionImpossible extends SearchProblem {
 				g.getDamages(), IMFstates, null, null, 0, 0);
 		initialState.setPriority(0);
 
+		vis = visualize;
 		SearchProblem MI = new MissionImpossible(g, initialState);
 		QueuingFunction qingFun;
 
@@ -363,39 +368,36 @@ public class MissionImpossible extends SearchProblem {
 		Node curr = (Node) n;
 		String state = curr.getState();
 		String[] currentStates = state.split(";");
-		String deaths = currentStates[0].split(",")[3];
+		String deaths = (currentStates[0].split(","))[3];
 		String damages = currentStates[3];
 		String res = "";
 		Stack<String> stack = new Stack<String>();
+		Stack<Node> nodesStack = new Stack<Node>();
 		stack.push(";" + deaths + ";" + damages + ";" + SearchProblem.expandedNodes);
-		boolean firstTime = true;
+		stack.push(curr.getOperator().toLowerCase());
+		curr = curr.getParent();
 		while (curr.getParent() != null && curr.getParent().getOperator() != null) {
-			if (firstTime) {
-				stack.push(curr.getOperator().toLowerCase());
-				firstTime = false;
-			} else {
-				stack.push(curr.getOperator().toLowerCase()
-						/*
-						 * + "(" + curr.getPathCost() + ")" + "(" + curr.getHeuristicCost() + ")"
-						 */ + ",");
-			}
+			stack.push(curr.getOperator().toLowerCase() + ",");
 			curr = curr.getParent();
 		}
-		stack.push(curr.getOperator().toLowerCase()
-				/*
-				 * + "(" + curr.getPathCost() + ")" + "(" + curr.getHeuristicCost() + ")"
-				 */ + ",");
-		while (!stack.isEmpty()) {
+		stack.push(curr.getOperator().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
+		while (!stack.isEmpty())
 			res += stack.pop();
-		}
 
-		int totalDamages = 0;
-		for (int i = 0; i < damages.split(",").length; i++) {
-			totalDamages += Integer.parseInt(damages.split(",")[i]);
+		if(vis) {
+			Node curr2 = (Node) n;
+			while (curr2.getParent() != null && curr2.getParent().getOperator() != null) {
+				nodesStack.push(curr2);
+				curr2 = curr2.getParent();
+			}
+			nodesStack.push(curr);
+			while (!nodesStack.isEmpty())
+				visualize(nodesStack.pop());
 		}
-		System.out.println("TOTAL DAMAGES " + totalDamages);
-
-		System.gc();
+		int s = 0;
+		for (int i = 0; i < damages.split(",").length; i++)
+			s += Integer.parseInt(damages.split(",")[i]);
+		System.out.println("TOTAL DAMAGES " + s);
 		return res;
 	}
 
@@ -594,16 +596,57 @@ public class MissionImpossible extends SearchProblem {
 		return res;
 	}
 
-	public static String convertArrayToString(short[] arr) {
+	public void visualize(Node n) {
+		File file = new File("visualize.txt");
+		int rows = grid.getRows();
+		int columns = grid.getColumns();
+		short xSub = grid.getxSub();
+		short ySub = grid.getySub();
+		String[] currentStates = n.getState().split(";");
+		String[] ethanPosCarryDamages = currentStates[0].split(",");
+		short xEthan = Short.valueOf(ethanPosCarryDamages[0]);
+		short yEthan = Short.valueOf(ethanPosCarryDamages[1]);
+		short[] xPoss = copyArray(currentStates[1].split(","));
+		short[] yPoss = copyArray(currentStates[2].split(","));
+		boolean emptyCell;
 		String res = "";
-		for (int i = 0; i < arr.length; i++) {
-			if (i < arr.length - 1) {
-				res += arr[i] + ",";
-			} else {
-				res += arr[i];
+		for (int i = 0; i < rows; i++) {
+			res+="|";
+			for (int j = 0; j < columns; j++) {
+				emptyCell = true;
+				if (xEthan == i && yEthan == j) {
+					res+="E|";
+					emptyCell = false;
+				} else {
+					if (xSub == i && ySub == j) {
+						res+="S|";
+						emptyCell = false;
+					} else {
+						for (int k = 0; k < xPoss.length; k++) {
+							if (xPoss[k] == i && yPoss[k] == j) {
+								res+="I|";
+								emptyCell = false;
+							}
+						}
+					}
+				}
+				if (emptyCell)
+					res+="_|";
 			}
+			res+="\n";
 		}
-		return res;
+		res+=n.getOperator().toString();
+		res+="\n";
+		res+="\n";
+		res+="\n";
+		res+="\n";
+		try {
+			FileWriter writer = new FileWriter(file, true);
+			writer.write(res);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) {
@@ -615,7 +658,7 @@ public class MissionImpossible extends SearchProblem {
 		// "5,5;2,1;1,0;1,3,4,2,4,1,3,1;54,31,39,98;2"
 		// "15,15;5,10;14,14;0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8;81,13,40,38,52,63,66,36,13;1"
 		System.out.println(
-				solve("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6", "AS2", false));
+				solve("14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6", "AS2", true));
 
 	}
 }
