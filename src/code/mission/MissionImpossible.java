@@ -15,7 +15,7 @@ public class MissionImpossible extends SearchProblem {
 
 	private Grid grid;
 	private Node initialState;
-	private static String[] operators = { "UP", "DOWN", "RIGHT", "LEFT", "CARRY", "DROP" };
+	private String[] operators = { "UP", "DOWN", "RIGHT", "LEFT", "CARRY", "DROP" };
 	private static boolean vis = false;
 
 	public MissionImpossible(Grid grid, Node initialState) {
@@ -130,7 +130,6 @@ public class MissionImpossible extends SearchProblem {
 
 		int c = generateNumber(1, agents);
 		res += c;
-		// print(visualise(height, width, xEthan, yEthan, xSub, ySub, imfs));
 		return res;
 	}
 
@@ -140,7 +139,7 @@ public class MissionImpossible extends SearchProblem {
 	}
 
 	@Override
-	public generic.Node stateSpace(generic.Node genericNode, String operator) {
+	public generic.Node transitionFunction(generic.Node genericNode, String operator) {
 		Node node = (mission.Node) genericNode;
 		String state = node.getState();
 		String[] currentStates = state.split(";");
@@ -386,11 +385,11 @@ public class MissionImpossible extends SearchProblem {
 
 		if(vis) {
 			Node curr2 = (Node) n;
-			while (curr2.getParent() != null && curr2.getParent().getOperator() != null) {
+			while (curr2.getParent() != null) {
 				nodesStack.push(curr2);
 				curr2 = curr2.getParent();
 			}
-			nodesStack.push(curr);
+			nodesStack.push(curr2);
 			while (!nodesStack.isEmpty())
 				visualize(nodesStack.pop());
 		}
@@ -610,6 +609,11 @@ public class MissionImpossible extends SearchProblem {
 		short[] yPoss = copyArray(currentStates[2].split(","));
 		boolean emptyCell;
 		String res = "";
+		if(n.getOperator()!=null)
+			res+="Operator: "+n.getOperator();
+		else
+			res+="Initial State";
+		res+="\n";
 		for (int i = 0; i < rows; i++) {
 			res+="|";
 			for (int j = 0; j < columns; j++) {
@@ -635,8 +639,6 @@ public class MissionImpossible extends SearchProblem {
 			}
 			res+="\n";
 		}
-		res+=n.getOperator().toString();
-		res+="\n";
 		res+="\n";
 		res+="\n";
 		res+="\n";

@@ -10,8 +10,6 @@ public class Node extends generic.Node {
 	public Node(short x, short y, short c, short deaths, short[] xPoss, short[] yPoss, short[] damages,
 			short[] IMFstates, Node parent, String operator, int depth, int pathCost) {
 		this.parent = parent;
-		// this.state = "";
-		// this.state += x + "," + y + "," + c + "," + deaths + ";";
 		StringBuilder xPositions = new StringBuilder();
 		StringBuilder yPositions = new StringBuilder();
 		StringBuilder damageString = new StringBuilder();
