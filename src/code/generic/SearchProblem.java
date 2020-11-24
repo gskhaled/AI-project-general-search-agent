@@ -5,7 +5,6 @@ import java.util.PriorityQueue;
 
 public abstract class SearchProblem {
 	private static HashMap<String, String> repeatedStates = new HashMap<String, String>();
-	private String[] operators;
 	public static int expandedNodes = 0;
 	public Node initialState;
 
