@@ -18,20 +18,59 @@ public class MissionImpossible extends SearchProblem {
 	private String[] operators = { "UP", "DOWN", "RIGHT", "LEFT", "CARRY", "DROP" };
 	private static boolean vis = false;
 
+	/**
+	 * The Mission Impossible search problem constructor.
+	 * 
+	 * @param grid
+	 *            Grid object.
+	 * @param initialState
+	 *            Node object representing the initial state (root of the search
+	 *            tree).
+	 */
 	public MissionImpossible(Grid grid, Node initialState) {
 		this.grid = grid;
 		this.initialState = initialState;
 	}
 
+	/**
+	 * @return the Node representing the initial state of the search problem (root
+	 *         of the search tree).
+	 */
 	@Override
 	public Node getInitialState() {
 		return this.initialState;
 	}
 
+	/**
+	 * Method to generate a random number in the range of min to max (inclusive).
+	 * 
+	 * @param min
+	 *            the minimum number (inclusive)
+	 * @param max
+	 *            the maximum number (inclusive)
+	 * @return the Node representing the initial state of the search problem (root
+	 *         of the search tree).
+	 */
 	public static int generateNumber(int min, int max) {
 		return (int) (Math.random() * (max - min + 1) + min);
 	}
 
+	/**
+	 * The solve method for the class Mission Impossible. This method calls the
+	 * "search" method of the general search problem, using a specific queuing
+	 * function based on the strategy.
+	 * 
+	 * @param grid
+	 *            a string representation of the grid to be traversed.
+	 * @param strategy
+	 *            the search strategy to follow to find a solution: one of [BF, DF,
+	 *            ID, UC, GR1, GR2, AS1, AS2].
+	 * @param visualize
+	 *            a boolean which would output a file to visualize the grid with the
+	 *            movements.
+	 * @return a string representing the solution: a path from root to the solution
+	 *         node.
+	 */
 	public static String solve(String grid, String strategy, boolean visualize) {
 		Grid g = new Grid(grid);
 		short[] IMFstates = new short[g.getDamages().length];
@@ -73,6 +112,12 @@ public class MissionImpossible extends SearchProblem {
 		return solution;
 	}
 
+	/**
+	 * Method to generate a random grid.
+	 * 
+	 * @return the String representing the grid with the positions of all IMFs as
+	 *         well as their damages, Ethan and the submarine's position.
+	 */
 	public static String genGrid() {
 		String res = "";
 		int height = generateNumber(5, 15);
@@ -135,7 +180,7 @@ public class MissionImpossible extends SearchProblem {
 
 	@Override
 	public String[] getOperators() {
-		return operators;
+		return this.operators;
 	}
 
 	@Override
@@ -301,9 +346,9 @@ public class MissionImpossible extends SearchProblem {
 						pathCost += 2;
 					}
 				}
-			
-				return new Node(x, y, c, deaths, xPoss, yPoss, damages, IMFstates, node, "CARRY", node.getDepth() + 1,
-						pathCost);
+
+			return new Node(x, y, c, deaths, xPoss, yPoss, damages, IMFstates, node, "CARRY", node.getDepth() + 1,
+					pathCost);
 		}
 		case "DROP": {
 			if (node.getOperator() != null && node.getOperator().equals("CARRY"))
@@ -367,7 +412,7 @@ public class MissionImpossible extends SearchProblem {
 		Node curr = (Node) n;
 		String state = curr.getState();
 		String[] currentStates = state.split(";");
-		String deaths = (currentStates[0].split(","))[3];
+		String deaths = currentStates[0].split(",")[3];
 		String damages = currentStates[3];
 		String res = "";
 		Stack<String> stack = new Stack<String>();
@@ -379,23 +424,29 @@ public class MissionImpossible extends SearchProblem {
 			stack.push(curr.getOperator().toLowerCase() + ",");
 			curr = curr.getParent();
 		}
-		stack.push(curr.getOperator().toLowerCase() /*+ "(" + curr.getPathCost() + ") " + "(" + calculateSecondHeuristic(curr, true) + ")" */ + ",");
-		while (!stack.isEmpty())
+		stack.push(curr.getOperator().toLowerCase() /*
+													 * + "(" + curr.getPathCost() + ") " + "(" +
+													 * calculateSecondHeuristic(curr, true) + ")"
+													 */ + ",");
+		while (!stack.isEmpty()) {
 			res += stack.pop();
+		}
 
-		if(vis) {
+		if (vis) {
 			Node curr2 = (Node) n;
 			while (curr2.getParent() != null) {
 				nodesStack.push(curr2);
 				curr2 = curr2.getParent();
 			}
 			nodesStack.push(curr2);
-			while (!nodesStack.isEmpty())
+			while (!nodesStack.isEmpty()) {
 				visualize(nodesStack.pop());
+			}
 		}
 		int s = 0;
-		for (int i = 0; i < damages.split(",").length; i++)
+		for (int i = 0; i < damages.split(",").length; i++) {
 			s += Integer.parseInt(damages.split(",")[i]);
+		}
 		System.out.println("TOTAL DAMAGES " + s);
 		return res;
 	}
@@ -587,6 +638,13 @@ public class MissionImpossible extends SearchProblem {
 		return cost;
 	}
 
+	/**
+	 * Copies the contents of a string array onto a new short array.
+	 * 
+	 * @param arr
+	 *            String array of numbers.
+	 * @return short array of the values that were in the string array.
+	 */
 	public short[] copyArray(String[] arr) {
 		short[] res = new short[arr.length];
 		for (int i = 0; i < arr.length; i++) {
@@ -595,12 +653,18 @@ public class MissionImpossible extends SearchProblem {
 		return res;
 	}
 
+	/**
+	 * Method that gets called on a node to visualize it onto a text file.
+	 * 
+	 * @param n
+	 *            Node to visualize.
+	 */
 	public void visualize(Node n) {
 		File file = new File("visualize.txt");
-		int rows = grid.getRows();
-		int columns = grid.getColumns();
-		short xSub = grid.getxSub();
-		short ySub = grid.getySub();
+		int rows = this.grid.getRows();
+		int columns = this.grid.getColumns();
+		short xSub = this.grid.getxSub();
+		short ySub = this.grid.getySub();
 		String[] currentStates = n.getState().split(";");
 		String[] ethanPosCarryDamages = currentStates[0].split(",");
 		short xEthan = Short.valueOf(ethanPosCarryDamages[0]);
@@ -609,39 +673,41 @@ public class MissionImpossible extends SearchProblem {
 		short[] yPoss = copyArray(currentStates[2].split(","));
 		boolean emptyCell;
 		String res = "";
-		if(n.getOperator()!=null)
-			res+="Operator: "+n.getOperator();
-		else
-			res+="Initial State";
-		res+="\n";
+		if (n.getOperator() != null) {
+			res += "Operator: " + n.getOperator();
+		} else {
+			res += "Initial State";
+		}
+		res += "\n";
 		for (int i = 0; i < rows; i++) {
-			res+="|";
+			res += "|";
 			for (int j = 0; j < columns; j++) {
 				emptyCell = true;
 				if (xEthan == i && yEthan == j) {
-					res+="E|";
+					res += "E|";
 					emptyCell = false;
 				} else {
 					if (xSub == i && ySub == j) {
-						res+="S|";
+						res += "S|";
 						emptyCell = false;
 					} else {
 						for (int k = 0; k < xPoss.length; k++) {
 							if (xPoss[k] == i && yPoss[k] == j) {
-								res+="I|";
+								res += "I|";
 								emptyCell = false;
 							}
 						}
 					}
 				}
-				if (emptyCell)
-					res+="_|";
+				if (emptyCell) {
+					res += "_|";
+				}
 			}
-			res+="\n";
+			res += "\n";
 		}
-		res+="\n";
-		res+="\n";
-		res+="\n";
+		res += "\n";
+		res += "\n";
+		res += "\n";
 		try {
 			FileWriter writer = new FileWriter(file, true);
 			writer.write(res);
