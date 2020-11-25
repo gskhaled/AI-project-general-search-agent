@@ -4,9 +4,13 @@
 # But not these files...
 !.gitignore
 !/src
+!/src/code/generic/*
+!/src/code/mission/*
+!/src/tests/*
 !/.github
 !build.gradle
 !README.md
 
 # ...even if they are in subdirectories
 !*/
+/.metadata/

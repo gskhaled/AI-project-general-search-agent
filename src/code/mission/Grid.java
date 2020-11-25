@@ -3,16 +3,16 @@ package mission;
 import java.util.Arrays;
 
 public class Grid {
-    short rows;
-    short columns;
-    short xEthan;
-    short yEthan;
-    short xSub;
-    short ySub;
-    short[] xPoss;
-    short[] yPoss;
-    short[] damages;
-    short c;
+    private short rows;
+    private short columns;
+    private short xEthan;
+    private short yEthan;
+    private short xSub;
+    private short ySub;
+    private short[] xPoss;
+    private short[] yPoss;
+    private short[] damages;
+    private short c;
 
     public Grid(String grid) {
         String[] s = grid.split(";");
