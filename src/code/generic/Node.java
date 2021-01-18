@@ -1,8 +1,8 @@
-package generic;
+package code.generic;
 
 public abstract class Node implements Comparable<Node> {
 	String state;
-	Node parent;
+	code.generic.Node parent;
 	String operator;
 	int depth;
 	int pathCost;
@@ -82,7 +82,7 @@ public abstract class Node implements Comparable<Node> {
 	public abstract String formulateNodeToString();
 
 	@Override
-	public int compareTo(generic.Node o) {
+	public int compareTo(code.generic.Node o) {
 		return getPriority() < o.getPriority() ? -1 : o.getPriority() == getPriority() ? 0 : 1;
 	}
 }

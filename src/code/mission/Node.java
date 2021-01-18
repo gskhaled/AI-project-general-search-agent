@@ -1,6 +1,6 @@
-package mission;
+package code.mission;
 
-public class Node extends generic.Node {
+public class Node extends code.generic.Node {
 	private Node parent;
 	private String operator;
 	private int depth;

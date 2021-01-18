@@ -1,4 +1,4 @@
-package mission;
+package code.mission;
 
 import java.util.Arrays;
 

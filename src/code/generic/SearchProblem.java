@@ -1,7 +1,9 @@
-package generic;
+package code.generic;
 
 import java.util.HashMap;
 import java.util.PriorityQueue;
+
+import code.generic.Node;
 
 public abstract class SearchProblem {
 	private static HashMap<String, String> repeatedStates = new HashMap<String, String>();
@@ -293,10 +295,6 @@ public abstract class SearchProblem {
 		return res;
 
 	}
-
-	public abstract int calculateFirstHeuristicOld(Node node);
-
-	public abstract int calculateSecondHeuristicOld(Node node, boolean print);
 
 	/**
 	 * Calculates the first heuristic (estimates the cost to reach the goal from the

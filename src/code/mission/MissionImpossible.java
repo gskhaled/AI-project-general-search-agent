@@ -1,4 +1,4 @@
-package mission;
+package code.mission;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Stack;
 
-import generic.QueuingFunction;
-import generic.SearchProblem;
+import code.generic.QueuingFunction;
+import code.generic.SearchProblem;
 
 public class MissionImpossible extends SearchProblem {
 
@@ -37,7 +37,7 @@ public class MissionImpossible extends SearchProblem {
 	 *         of the search tree).
 	 */
 	@Override
-	public Node getInitialState() {
+	public code.generic.Node getInitialState() {
 		return this.initialState;
 	}
 
@@ -184,8 +184,8 @@ public class MissionImpossible extends SearchProblem {
 	}
 
 	@Override
-	public generic.Node transitionFunction(generic.Node genericNode, String operator) {
-		Node node = (mission.Node) genericNode;
+	public code.generic.Node transitionFunction(code.generic.Node genericNode, String operator) {
+		Node node = (Node) genericNode;
 		String state = node.getState();
 		String[] currentStates = state.split(";");
 		String[] ethanPosCarryDeaths = currentStates[0].split(",");
@@ -388,8 +388,8 @@ public class MissionImpossible extends SearchProblem {
 	}
 
 	@Override
-	public Boolean goalTest(generic.Node genericNode) {
-		Node node = (mission.Node) genericNode;
+	public Boolean goalTest(code.generic.Node genericNode) {
+		Node node = (Node) genericNode;
 		String state = node.getState();
 		String[] currentStates = state.split(";");
 		String[] ethanPosCarryDamages = currentStates[0].split(",");
@@ -408,7 +408,7 @@ public class MissionImpossible extends SearchProblem {
 	}
 
 	@Override
-	public String returnPath(generic.Node n) {
+	public String returnPath(code.generic.Node n) {
 		Node curr = (Node) n;
 		String state = curr.getState();
 		String[] currentStates = state.split(";");
@@ -451,8 +451,7 @@ public class MissionImpossible extends SearchProblem {
 		return res;
 	}
 
-	@Override
-	public int calculateFirstHeuristicOld(generic.Node n) {
+	public int calculateFirstHeuristicOld(code.generic.Node n) {
 		int cost = 0;
 		String[] currentStates = n.getState().split(";");
 		String[] ethanPosCarryDamages = currentStates[0].split(",");
@@ -477,7 +476,7 @@ public class MissionImpossible extends SearchProblem {
 	}
 
 	@Override
-	public int calculateFirstHeuristic(generic.Node n) {
+	public int calculateFirstHeuristic(code.generic.Node n) {
 		int cost = 0;
 		boolean foundSomeone = false;
 		String[] currentStates = n.getState().split(";");
@@ -511,7 +510,7 @@ public class MissionImpossible extends SearchProblem {
 	}
 
 	@Override
-	public int calculateSecondHeuristic(generic.Node n) {
+	public int calculateSecondHeuristic(code.generic.Node n) {
 		int cost = 0;
 		boolean foundSomeone = false;
 		String[] currentStates = n.getState().split(";");
@@ -541,8 +540,7 @@ public class MissionImpossible extends SearchProblem {
 		return cost;
 	}
 
-	@Override
-	public int calculateSecondHeuristicOld(generic.Node n, boolean print) {
+	public int calculateSecondHeuristicOld(code.generic.Node n, boolean print) {
 		if (print) {
 			int cost = 0;
 			String[] currentStates = n.getState().split(";");
