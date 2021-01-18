@@ -2,7 +2,7 @@ package code.generic;
 
 public abstract class Node implements Comparable<Node> {
 	String state;
-	code.generic.Node parent;
+	Node parent;
 	String operator;
 	int depth;
 	int pathCost;

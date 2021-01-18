@@ -3,8 +3,6 @@ package code.generic;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
-import code.generic.Node;
-
 public abstract class SearchProblem {
 	private static HashMap<String, String> repeatedStates = new HashMap<String, String>();
 	public static int expandedNodes = 0;

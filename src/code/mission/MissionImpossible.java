@@ -37,7 +37,7 @@ public class MissionImpossible extends SearchProblem {
 	 *         of the search tree).
 	 */
 	@Override
-	public code.generic.Node getInitialState() {
+	public Node getInitialState() {
 		return this.initialState;
 	}
 
@@ -509,7 +509,6 @@ public class MissionImpossible extends SearchProblem {
 		return cost;
 	}
 
-	@Override
 	public int calculateSecondHeuristic(code.generic.Node n) {
 		int cost = 0;
 		boolean foundSomeone = false;
